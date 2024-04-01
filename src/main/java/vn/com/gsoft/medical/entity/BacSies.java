@@ -1,6 +1,7 @@
 package vn.com.gsoft.medical.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "BacSies")
+@Entity
 public class BacSies extends BaseEntity {
     @Id
     @Column(name = "id")
@@ -31,18 +33,8 @@ public class BacSies extends BaseEntity {
     private String email;
     @Column(name = "MaNhaThuoc")
     private String maNhaThuoc;
-    @Column(name = "Created")
-    private Date created;
-    @Column(name = "Modified")
-    private Date modified;
-    @Column(name = "CreatedBy_UserId")
-    private Integer createdByUserId;
-    @Column(name = "ModifiedBy_UserId")
-    private Integer modifiedByUserId;
     @Column(name = "Active")
     private Boolean active;
-    @Column(name = "RecordStatusID")
-    private Integer recordStatusID;
     @Column(name = "StoreId")
     private Integer storeId;
     @Column(name = "MasterId")
