@@ -18,6 +18,7 @@ import java.util.Date;
 public class BacSies extends BaseEntity {
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
 
