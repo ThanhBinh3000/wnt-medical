@@ -18,7 +18,7 @@ public class SearchParams {
     /**
      * Gets the order by clause.
      *
-     * @return the order by clause
+     * @return the order by clausel
      */
     public String getOrderByClause() {
 
