@@ -14,6 +14,7 @@ import vn.com.gsoft.medical.service.BacSiesService;
 public class BacSiesServiceImpl extends BaseServiceImpl<BacSies, BacSiesReq,Long> implements BacSiesService {
 
 	private BacSiesRepository hdrRepo;
+
 	@Autowired
 	public BacSiesServiceImpl(BacSiesRepository hdrRepo) {
 		super(hdrRepo);

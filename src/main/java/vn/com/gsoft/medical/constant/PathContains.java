@@ -12,12 +12,10 @@ public class PathContains {
     public static final String URL_DELETE = "/delete";
 
     public static final String URL_BAC_SI = "/bac-sies";
-    public static final String URL_NHOM_BAC_SI = "/nhom-bac-si";
-    public static final String URL_NHOM_KHACH_HANG = "/nhom-khach-hang";
-    public static final String URL_NHOM_THUOC = "/nhom-thuoc";
-    public static final String URL_DON_VI_TINH = "/don-vi-tinh";
-    public static final String URL_THUOC = "/thuoc";
-    public static final String URL_WAREHOUSE_LOCATION = "/warehouse-location";
+    public static final String URL_PHONG_KHAM = "/phong-khams";
+    public static final String URL_PHIEU_KHAM = "/phieu-kham";
+    public static final String URL_PHIEU_DICH_VU = "/phieu-dich-vu";
+    public static final String URL_PHIEU_DICH_VU_CT = "/phieu-dich-vu-ct";
 
 
 }
