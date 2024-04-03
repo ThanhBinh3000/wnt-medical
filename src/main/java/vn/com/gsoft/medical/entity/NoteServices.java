@@ -39,16 +39,6 @@ public class NoteServices extends BaseEntity {
     @Lob
     @Column(name = "Description")
     private String description;
-    @Column(name = "RecordStatusId")
-    private Integer recordStatusId;
-    @Column(name = "Created")
-    private Date created;
-    @Column(name = "Modified")
-    private Date modified;
-    @Column(name = "CreatedBy_UserId")
-    private Integer createdByUserId;
-    @Column(name = "ModifiedBy_UserId")
-    private Integer modifiedByUserId;
     @Column(name = "IsModified")
     private Boolean isModified;
     @Column(name = "IdDoctor")

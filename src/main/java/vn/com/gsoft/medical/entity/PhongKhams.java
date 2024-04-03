@@ -26,8 +26,6 @@ public class PhongKhams extends BaseEntity {
     private String tenPhongKham;
     @Column(name = "MaNhaThuoc")
     private String maNhaThuoc;
-    @Column(name = "RecordStatusId")
-    private Integer recordStatusId;
     @Column(name = "Description")
     private String description;
 }

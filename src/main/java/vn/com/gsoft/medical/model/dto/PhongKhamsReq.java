@@ -17,7 +17,6 @@ public class PhongKhamsReq extends BaseRequest {
     private String maPhongKham;
     private String tenPhongKham;
     private String maNhaThuoc;
-    private Integer recordStatusId;
     private String description;
 }
 

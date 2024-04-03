@@ -1,11 +1,13 @@
 package vn.com.gsoft.medical.repository;
 
-import vn.com.gsoft.categories.entity.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import vn.com.gsoft.medical.entity.NoteMedicals;
+import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
+
 import java.util.List;
 
 @Repository
@@ -16,22 +18,12 @@ public interface NoteMedicalsRepository extends BaseRepository<NoteMedicals, Not
           + " AND (:#{#param.noteNumber} IS NULL OR c.noteNumber = :#{#param.noteNumber}) "
           + " AND (:#{#param.idPatient} IS NULL OR c.idPatient = :#{#param.idPatient}) "
           + " AND (:#{#param.idDoctor} IS NULL OR c.idDoctor = :#{#param.idDoctor}) "
-          + " AND (:#{#param.noteDate} IS NULL OR c.noteDate >= :#{#param.noteDateFrom}) "
-          + " AND (:#{#param.noteDate} IS NULL OR c.noteDate <= :#{#param.noteDateTo}) "
           + " AND (:#{#param.includingDiseases} IS NULL OR lower(c.includingDiseases) LIKE lower(concat('%',CONCAT(:#{#param.includingDiseases},'%'))))"
           + " AND (:#{#param.drugAllergy} IS NULL OR lower(c.drugAllergy) LIKE lower(concat('%',CONCAT(:#{#param.drugAllergy},'%'))))"
           + " AND (:#{#param.diagnostic} IS NULL OR lower(c.diagnostic) LIKE lower(concat('%',CONCAT(:#{#param.diagnostic},'%'))))"
           + " AND (:#{#param.conclude} IS NULL OR lower(c.conclude) LIKE lower(concat('%',CONCAT(:#{#param.conclude},'%'))))"
-          + " AND (:#{#param.created} IS NULL OR c.created >= :#{#param.createdFrom}) "
-          + " AND (:#{#param.created} IS NULL OR c.created <= :#{#param.createdTo}) "
-          + " AND (:#{#param.modified} IS NULL OR c.modified >= :#{#param.modifiedFrom}) "
-          + " AND (:#{#param.modified} IS NULL OR c.modified <= :#{#param.modifiedTo}) "
-          + " AND (:#{#param.createdByUserId} IS NULL OR c.createdByUserId = :#{#param.createdByUserId}) "
-          + " AND (:#{#param.modifiedByUserId} IS NULL OR c.modifiedByUserId = :#{#param.modifiedByUserId}) "
           + " AND (:#{#param.recordStatusId} IS NULL OR c.recordStatusId = :#{#param.recordStatusId}) "
           + " AND (:#{#param.storeCode} IS NULL OR lower(c.storeCode) LIKE lower(concat('%',CONCAT(:#{#param.storeCode},'%'))))"
-          + " AND (:#{#param.reexaminationDate} IS NULL OR c.reexaminationDate >= :#{#param.reexaminationDateFrom}) "
-          + " AND (:#{#param.reexaminationDate} IS NULL OR c.reexaminationDate <= :#{#param.reexaminationDateTo}) "
           + " AND (:#{#param.totalMoney} IS NULL OR c.totalMoney = :#{#param.totalMoney}) "
           + " AND (:#{#param.sickCondition} IS NULL OR c.sickCondition = :#{#param.sickCondition}) "
           + " AND (:#{#param.clinicalExamination} IS NULL OR lower(c.clinicalExamination) LIKE lower(concat('%',CONCAT(:#{#param.clinicalExamination},'%'))))"
@@ -61,22 +53,12 @@ public interface NoteMedicalsRepository extends BaseRepository<NoteMedicals, Not
           + " AND (:#{#param.noteNumber} IS NULL OR c.noteNumber = :#{#param.noteNumber}) "
           + " AND (:#{#param.idPatient} IS NULL OR c.idPatient = :#{#param.idPatient}) "
           + " AND (:#{#param.idDoctor} IS NULL OR c.idDoctor = :#{#param.idDoctor}) "
-          + " AND (:#{#param.noteDate} IS NULL OR c.noteDate >= :#{#param.noteDateFrom}) "
-          + " AND (:#{#param.noteDate} IS NULL OR c.noteDate <= :#{#param.noteDateTo}) "
           + " AND (:#{#param.includingDiseases} IS NULL OR lower(c.includingDiseases) LIKE lower(concat('%',CONCAT(:#{#param.includingDiseases},'%'))))"
           + " AND (:#{#param.drugAllergy} IS NULL OR lower(c.drugAllergy) LIKE lower(concat('%',CONCAT(:#{#param.drugAllergy},'%'))))"
           + " AND (:#{#param.diagnostic} IS NULL OR lower(c.diagnostic) LIKE lower(concat('%',CONCAT(:#{#param.diagnostic},'%'))))"
           + " AND (:#{#param.conclude} IS NULL OR lower(c.conclude) LIKE lower(concat('%',CONCAT(:#{#param.conclude},'%'))))"
-          + " AND (:#{#param.created} IS NULL OR c.created >= :#{#param.createdFrom}) "
-          + " AND (:#{#param.created} IS NULL OR c.created <= :#{#param.createdTo}) "
-          + " AND (:#{#param.modified} IS NULL OR c.modified >= :#{#param.modifiedFrom}) "
-          + " AND (:#{#param.modified} IS NULL OR c.modified <= :#{#param.modifiedTo}) "
-          + " AND (:#{#param.createdByUserId} IS NULL OR c.createdByUserId = :#{#param.createdByUserId}) "
-          + " AND (:#{#param.modifiedByUserId} IS NULL OR c.modifiedByUserId = :#{#param.modifiedByUserId}) "
           + " AND (:#{#param.recordStatusId} IS NULL OR c.recordStatusId = :#{#param.recordStatusId}) "
           + " AND (:#{#param.storeCode} IS NULL OR lower(c.storeCode) LIKE lower(concat('%',CONCAT(:#{#param.storeCode},'%'))))"
-          + " AND (:#{#param.reexaminationDate} IS NULL OR c.reexaminationDate >= :#{#param.reexaminationDateFrom}) "
-          + " AND (:#{#param.reexaminationDate} IS NULL OR c.reexaminationDate <= :#{#param.reexaminationDateTo}) "
           + " AND (:#{#param.totalMoney} IS NULL OR c.totalMoney = :#{#param.totalMoney}) "
           + " AND (:#{#param.sickCondition} IS NULL OR c.sickCondition = :#{#param.sickCondition}) "
           + " AND (:#{#param.clinicalExamination} IS NULL OR lower(c.clinicalExamination) LIKE lower(concat('%',CONCAT(:#{#param.clinicalExamination},'%'))))"

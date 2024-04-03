@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.com.gsoft.medical.constant.PathContains;
 import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
-import vn.com.gsoft.medical.response.BaseResponse;
+import vn.com.gsoft.medical.model.system.BaseResponse;
 import vn.com.gsoft.medical.service.NoteMedicalsService;
 import vn.com.gsoft.medical.util.system.ResponseUtils;
 

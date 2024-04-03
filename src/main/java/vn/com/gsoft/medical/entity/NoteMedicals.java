@@ -37,16 +37,6 @@ public class NoteMedicals extends BaseEntity {
     private String diagnostic;
     @Column(name = "Conclude")
     private String conclude;
-    @Column(name = "Created")
-    private Date created;
-    @Column(name = "Modified")
-    private Date modified;
-    @Column(name = "CreatedBy_UserId")
-    private Integer createdByUserId;
-    @Column(name = "ModifiedBy_UserId")
-    private Integer modifiedByUserId;
-    @Column(name = "RecordStatusId")
-    private Integer recordStatusId;
     @Column(name = "StoreCode")
     private String storeCode;
     @Column(name = "ReexaminationDate")

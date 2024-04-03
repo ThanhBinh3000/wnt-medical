@@ -22,7 +22,6 @@ public class NoteMedicalsReq extends BaseRequest {
     private String drugAllergy;
     private String diagnostic;
     private String conclude;
-    private Integer recordStatusId;
     private String storeCode;
     private Date reexaminationDate;
     private BigDecimal totalMoney;
