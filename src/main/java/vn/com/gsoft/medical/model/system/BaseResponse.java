@@ -1,4 +1,4 @@
-package vn.com.gsoft.medical.response;
+package vn.com.gsoft.medical.model.system;
 
 import lombok.Data;
 

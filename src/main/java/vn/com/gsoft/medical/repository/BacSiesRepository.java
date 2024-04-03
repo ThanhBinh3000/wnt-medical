@@ -15,6 +15,7 @@ public interface BacSiesRepository extends BaseRepository<BacSies, BacSiesReq, L
   @Query("SELECT c FROM BacSies c " +
          "WHERE 1=1 "
           + " AND (:#{#param.maBacSy} IS NULL OR c.maBacSy = :#{#param.maBacSy}) "
+          + " AND (:#{#param.recordStatusId} IS NULL OR c.recordStatusId = :#{#param.recordStatusId}) "
           + " AND (:#{#param.tenBacSy} IS NULL OR lower(c.tenBacSy) LIKE lower(concat('%',CONCAT(:#{#param.tenBacSy},'%'))))"
           + " AND (:#{#param.diaChi} IS NULL OR lower(c.diaChi) LIKE lower(concat('%',CONCAT(:#{#param.diaChi},'%'))))"
           + " AND (:#{#param.dienThoai} IS NULL OR lower(c.dienThoai) LIKE lower(concat('%',CONCAT(:#{#param.dienThoai},'%'))))"
@@ -44,6 +45,7 @@ public interface BacSiesRepository extends BaseRepository<BacSies, BacSiesReq, L
   @Query("SELECT c FROM BacSies c " +
          "WHERE 1=1 "
           + " AND (:#{#param.maBacSy} IS NULL OR c.maBacSy = :#{#param.maBacSy}) "
+          + " AND (:#{#param.recordStatusId} IS NULL OR c.recordStatusId = :#{#param.recordStatusId}) "
           + " AND (:#{#param.tenBacSy} IS NULL OR lower(c.tenBacSy) LIKE lower(concat('%',CONCAT(:#{#param.tenBacSy},'%'))))"
           + " AND (:#{#param.diaChi} IS NULL OR lower(c.diaChi) LIKE lower(concat('%',CONCAT(:#{#param.diaChi},'%'))))"
           + " AND (:#{#param.dienThoai} IS NULL OR lower(c.dienThoai) LIKE lower(concat('%',CONCAT(:#{#param.dienThoai},'%'))))"

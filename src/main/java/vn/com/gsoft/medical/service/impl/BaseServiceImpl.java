@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
+import vn.com.gsoft.medical.constant.RecordStatusContains;
 import vn.com.gsoft.medical.entity.BaseEntity;
 import vn.com.gsoft.medical.model.system.BaseRequest;
 import vn.com.gsoft.medical.model.system.Profile;
@@ -36,11 +37,13 @@ public class BaseServiceImpl<E extends BaseEntity,R extends BaseRequest, PK exte
     @Override
     public Page<E> searchPage(R req) throws Exception {
         Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
+        req.setRecordStatusId(RecordStatusContains.ACTIVE);
         return repository.searchPage(req, pageable);
     }
 
     @Override
     public List<E> searchList(R req) throws Exception {
+        req.setRecordStatusId(RecordStatusContains.ACTIVE);
         return repository.searchList(req);
     }
 
@@ -53,7 +56,7 @@ public class BaseServiceImpl<E extends BaseEntity,R extends BaseRequest, PK exte
                 getGenericSuperclass()).getActualTypeArguments()[0]).newInstance();
         BeanUtils.copyProperties(req, e, "id");
         if(e.getRecordStatusId() == null){
-            e.setRecordStatusId(0L);
+            e.setRecordStatusId(RecordStatusContains.ACTIVE);
         }
         repository.save(e);
         return e;
@@ -72,6 +75,9 @@ public class BaseServiceImpl<E extends BaseEntity,R extends BaseRequest, PK exte
 
         E e = optional.get();
         BeanUtils.copyProperties(req, e, "id");
+        if(e.getRecordStatusId() == null){
+            e.setRecordStatusId(RecordStatusContains.ACTIVE);
+        }
         repository.save(e);
         return e;
     }
@@ -85,6 +91,10 @@ public class BaseServiceImpl<E extends BaseEntity,R extends BaseRequest, PK exte
         Optional<E> optional = repository.findById(id);
         if (optional.isEmpty()) {
             throw new Exception("Không tìm thấy dữ liệu.");
+        }else {
+            if(optional.get().getRecordStatusId() != RecordStatusContains.ACTIVE){
+                throw new Exception("Không tìm thấy dữ liệu.");
+            }
         }
         return optional.get();
     }
