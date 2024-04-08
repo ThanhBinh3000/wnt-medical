@@ -14,7 +14,7 @@ import java.util.List;
 public interface BacSiesRepository extends BaseRepository<BacSies, BacSiesReq, Long> {
   @Query("SELECT c FROM BacSies c " +
          "WHERE 1=1 "
-          + " AND (:#{#param.maBacSy} IS NULL OR c.maBacSy = :#{#param.maBacSy}) "
+          + " AND (:#{#param.id} IS NULL OR c.id = :#{#param.id}) "
           + " AND (:#{#param.recordStatusId} IS NULL OR c.recordStatusId = :#{#param.recordStatusId}) "
           + " AND (:#{#param.tenBacSy} IS NULL OR lower(c.tenBacSy) LIKE lower(concat('%',CONCAT(:#{#param.tenBacSy},'%'))))"
           + " AND (:#{#param.diaChi} IS NULL OR lower(c.diaChi) LIKE lower(concat('%',CONCAT(:#{#param.diaChi},'%'))))"
@@ -37,14 +37,14 @@ public interface BacSiesRepository extends BaseRepository<BacSies, BacSiesReq, L
           + " AND (:#{#param.connectPassword} IS NULL OR lower(c.connectPassword) LIKE lower(concat('%',CONCAT(:#{#param.connectPassword},'%'))))"
           + " AND (:#{#param.resultConnect} IS NULL OR lower(c.resultConnect) LIKE lower(concat('%',CONCAT(:#{#param.resultConnect},'%'))))"
           + " AND (:#{#param.maNhomBacSy} IS NULL OR c.maNhomBacSy = :#{#param.maNhomBacSy}) "
-          + " ORDER BY c.maBacSy desc"
+          + " ORDER BY c.id desc"
   )
   Page<BacSies> searchPage(@Param("param") BacSiesReq param, Pageable pageable);
   
   
   @Query("SELECT c FROM BacSies c " +
          "WHERE 1=1 "
-          + " AND (:#{#param.maBacSy} IS NULL OR c.maBacSy = :#{#param.maBacSy}) "
+          + " AND (:#{#param.id} IS NULL OR c.id = :#{#param.id}) "
           + " AND (:#{#param.recordStatusId} IS NULL OR c.recordStatusId = :#{#param.recordStatusId}) "
           + " AND (:#{#param.tenBacSy} IS NULL OR lower(c.tenBacSy) LIKE lower(concat('%',CONCAT(:#{#param.tenBacSy},'%'))))"
           + " AND (:#{#param.diaChi} IS NULL OR lower(c.diaChi) LIKE lower(concat('%',CONCAT(:#{#param.diaChi},'%'))))"
@@ -67,7 +67,7 @@ public interface BacSiesRepository extends BaseRepository<BacSies, BacSiesReq, L
           + " AND (:#{#param.connectPassword} IS NULL OR lower(c.connectPassword) LIKE lower(concat('%',CONCAT(:#{#param.connectPassword},'%'))))"
           + " AND (:#{#param.resultConnect} IS NULL OR lower(c.resultConnect) LIKE lower(concat('%',CONCAT(:#{#param.resultConnect},'%'))))"
           + " AND (:#{#param.maNhomBacSy} IS NULL OR c.maNhomBacSy = :#{#param.maNhomBacSy}) "
-          + " ORDER BY c.maBacSy desc"
+          + " ORDER BY c.id desc"
   )
   List<BacSies> searchList(@Param("param") BacSiesReq param);
 

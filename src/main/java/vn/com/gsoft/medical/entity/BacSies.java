@@ -21,9 +21,6 @@ public class BacSies extends BaseEntity {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
-
-    @Column(name = "MaBacSy")
-    private Integer maBacSy;
     @Column(name = "TenBacSy")
     private String tenBacSy;
     @Column(name = "DiaChi")

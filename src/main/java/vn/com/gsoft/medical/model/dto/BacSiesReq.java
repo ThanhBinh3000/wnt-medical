@@ -8,7 +8,6 @@ import java.util.Date;
 @Data
 public class BacSiesReq extends BaseRequest {
 
-    private Integer maBacSy;
     private String tenBacSy;
     private String diaChi;
     private String dienThoai;
