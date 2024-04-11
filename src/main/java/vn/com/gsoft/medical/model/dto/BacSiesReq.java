@@ -27,6 +27,8 @@ public class BacSiesReq extends BaseRequest {
     private String connectPassword;
     private Boolean isConnectivity;
     private String resultConnect;
-    private Integer maNhomBacSy;
+    private Long maNhomBacSy;
+
+    private Boolean dataDelete;
 }
 

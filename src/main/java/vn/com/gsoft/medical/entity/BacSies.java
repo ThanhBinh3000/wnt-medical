@@ -34,7 +34,7 @@ public class BacSies extends BaseEntity {
     @Column(name = "Active")
     private Boolean active;
     @Column(name = "StoreId")
-    private Integer storeId;
+    private Long storeId;
     @Column(name = "MasterId")
     private Integer masterId;
     @Column(name = "MetadataHash")
@@ -52,6 +52,11 @@ public class BacSies extends BaseEntity {
     @Column(name = "ResultConnect")
     private String resultConnect;
     @Column(name = "MaNhomBacSy")
-    private Integer maNhomBacSy;
+    private Long maNhomBacSy;
+
+    // @Transient
+
+    @Transient
+    private String tenNhomBacSy;
 }
 
