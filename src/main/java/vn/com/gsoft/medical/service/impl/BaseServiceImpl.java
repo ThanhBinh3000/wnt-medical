@@ -16,6 +16,7 @@ import vn.com.gsoft.medical.service.BaseService;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,6 +59,8 @@ public class BaseServiceImpl<E extends BaseEntity,R extends BaseRequest, PK exte
         if(e.getRecordStatusId() == null){
             e.setRecordStatusId(RecordStatusContains.ACTIVE);
         }
+        e.setCreated(new Date());
+        e.setCreatedByUserId(getLoggedUser().getId());
         repository.save(e);
         return e;
     }
@@ -74,10 +77,12 @@ public class BaseServiceImpl<E extends BaseEntity,R extends BaseRequest, PK exte
         }
 
         E e = optional.get();
-        BeanUtils.copyProperties(req, e, "id");
+        BeanUtils.copyProperties(req, e, "id", "created", "createdByUserId");
         if(e.getRecordStatusId() == null){
             e.setRecordStatusId(RecordStatusContains.ACTIVE);
         }
+        e.setModified(new Date());
+        e.setModifiedByUserId(getLoggedUser().getId());
         repository.save(e);
         return e;
     }
@@ -109,7 +114,42 @@ public class BaseServiceImpl<E extends BaseEntity,R extends BaseRequest, PK exte
         if (optional.isEmpty()) {
             throw new Exception("Không tìm thấy dữ liệu.");
         }
-        optional.get().setRecordStatusId(2l);
+        optional.get().setRecordStatusId(RecordStatusContains.DELETED);
+        repository.save(optional.get());
+        return true;
+    }
+    @Override
+    public boolean restore(PK id) throws Exception {
+        Profile userInfo = this.getLoggedUser();
+        if (userInfo == null)
+            throw new Exception("Bad request.");
+
+        Optional<E> optional = repository.findById(id);
+        if (optional.isEmpty()) {
+            throw new Exception("Không tìm thấy dữ liệu.");
+        }
+        if(!optional.get().getRecordStatusId().equals(RecordStatusContains.DELETED)){
+            throw new Exception("Không tìm thấy dữ liệu.");
+        }
+        optional.get().setRecordStatusId(RecordStatusContains.ACTIVE);
+        repository.save(optional.get());
+        return true;
+    }
+
+    @Override
+    public boolean deleteForever(PK id) throws Exception {
+        Profile userInfo = this.getLoggedUser();
+        if (userInfo == null)
+            throw new Exception("Bad request.");
+
+        Optional<E> optional = repository.findById(id);
+        if (optional.isEmpty()) {
+            throw new Exception("Không tìm thấy dữ liệu.");
+        }
+        if(!optional.get().getRecordStatusId().equals(RecordStatusContains.DELETED)){
+            throw new Exception("Không tìm thấy dữ liệu.");
+        }
+        optional.get().setRecordStatusId(RecordStatusContains.DELETED_FOREVER);
         repository.save(optional.get());
         return true;
     }
