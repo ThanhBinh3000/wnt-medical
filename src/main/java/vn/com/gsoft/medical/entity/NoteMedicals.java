@@ -1,6 +1,5 @@
 package vn.com.gsoft.medical.entity;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +23,7 @@ public class NoteMedicals extends BaseEntity {
     @Column(name = "NoteNumber")
     private Integer noteNumber;
     @Column(name = "IdPatient")
-    private Integer idPatient;
+    private Long idPatient;
     @Column(name = "IdDoctor")
     private Integer idDoctor;
     @Column(name = "NoteDate")
@@ -81,5 +80,9 @@ public class NoteMedicals extends BaseEntity {
     private String diagnosticOther;
     @Column(name = "IsLock")
     private Boolean isLock;
+    @Transient
+    private String createdByUseText;
+    @Transient
+    private String patientName;
 }
 

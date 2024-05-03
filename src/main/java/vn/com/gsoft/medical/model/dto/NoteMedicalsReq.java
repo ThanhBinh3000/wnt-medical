@@ -15,7 +15,7 @@ import java.util.Date;
 public class NoteMedicalsReq extends BaseRequest {
 
     private Integer noteNumber;
-    private Integer idPatient;
+    private Long idPatient;
     private Integer idDoctor;
     private Date noteDate;
     private String includingDiseases;
