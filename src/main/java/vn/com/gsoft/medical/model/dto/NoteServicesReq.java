@@ -1,11 +1,6 @@
 package vn.com.gsoft.medical.model.dto;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import vn.com.gsoft.medical.entity.BaseEntity;
 import vn.com.gsoft.medical.model.system.BaseRequest;
 
 import java.math.BigDecimal;
@@ -22,10 +17,6 @@ public class NoteServicesReq extends BaseRequest {
     private String storeCode;
     private BigDecimal totalMoney;
     private String description;
-    private Date created;
-    private Date modified;
-    private Integer createdByUserId;
-    private Integer modifiedByUserId;
     private Boolean isModified;
     private Integer idDoctor;
     private String barCode;

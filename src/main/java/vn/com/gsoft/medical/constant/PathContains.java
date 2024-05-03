@@ -8,9 +8,10 @@ public class PathContains {
     public static final String URL_CREATE = "/create";
     public static final String URL_UPDATE = "/update";
     public static final String URL_DETAIL = "/detail/{id}";
-
     public static final String URL_DELETE = "/delete";
-
+    public static final String URL_DELETE_DATABASE = "/delete-database";
+    public static final String URL_RESTORE = "/restore";
+    public static final String URL_UPDATE_STATUS_MULTI = "/update/multiple";
     public static final String URL_BAC_SI = "/bac-sies";
     public static final String URL_PHONG_KHAM = "/phong-khams";
     public static final String URL_PHIEU_KHAM = "/phieu-kham";

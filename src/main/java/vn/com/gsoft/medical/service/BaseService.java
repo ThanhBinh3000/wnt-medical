@@ -2,6 +2,7 @@ package vn.com.gsoft.medical.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
+import vn.com.gsoft.medical.model.dto.MedicalFeeReceiptsReq;
 
 import java.io.Serializable;
 import java.util.List;
@@ -26,4 +27,6 @@ public interface BaseService<E,R, PK extends Serializable> {
     boolean restore(PK id) throws Exception;
     @Transactional(rollbackFor = {Exception.class, Throwable.class})
     boolean deleteForever(PK id) throws Exception;
+    @Transactional(rollbackFor = {Exception.class, Throwable.class})
+    boolean updateMultiple(R req) throws Exception;
 }

@@ -63,4 +63,22 @@ public class MedicalFeeReceiptsController {
   public ResponseEntity<BaseResponse> delete(@Valid @RequestBody MedicalFeeReceiptsReq idSearchReq) throws Exception {
     return ResponseEntity.ok(ResponseUtils.ok(service.delete(idSearchReq.getId())));
   }
+
+  @PostMapping(value = PathContains.URL_DELETE_DATABASE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> deleteDatabase(@Valid @RequestBody MedicalFeeReceiptsReq idSearchReq) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.deleteForever(idSearchReq.getId())));
+  }
+
+  @PostMapping(value = PathContains.URL_UPDATE_STATUS_MULTI, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> updStatusMulti(@Valid @RequestBody MedicalFeeReceiptsReq idSearchReq) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.updateMultiple(idSearchReq)));
+  }
+
+  @PostMapping(value = PathContains.URL_RESTORE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> restore(@Valid @RequestBody MedicalFeeReceiptsReq idSearchReq) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.restore(idSearchReq.getId())));
+  }
 }

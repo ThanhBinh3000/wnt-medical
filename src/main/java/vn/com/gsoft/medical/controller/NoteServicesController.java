@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.com.gsoft.medical.constant.PathContains;
+import vn.com.gsoft.medical.model.dto.MedicalFeeReceiptsReq;
 import vn.com.gsoft.medical.model.dto.NoteServicesReq;
 import vn.com.gsoft.medical.model.system.BaseResponse;
 import vn.com.gsoft.medical.service.NoteServicesService;
@@ -63,5 +64,24 @@ public class NoteServicesController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<BaseResponse> delete(@Valid @RequestBody NoteServicesReq idSearchReq) throws Exception {
     return ResponseEntity.ok(ResponseUtils.ok(service.delete(idSearchReq.getId())));
+  }
+
+
+  @PostMapping(value = PathContains.URL_DELETE_DATABASE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> deleteDatabase(@Valid @RequestBody NoteServicesReq idSearchReq) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.deleteForever(idSearchReq.getId())));
+  }
+
+  @PostMapping(value = PathContains.URL_UPDATE_STATUS_MULTI, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> updStatusMulti(@Valid @RequestBody NoteServicesReq idSearchReq) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.updateMultiple(idSearchReq)));
+  }
+
+  @PostMapping(value = PathContains.URL_RESTORE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> restore(@Valid @RequestBody NoteServicesReq idSearchReq) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.restore(idSearchReq.getId())));
   }
 }

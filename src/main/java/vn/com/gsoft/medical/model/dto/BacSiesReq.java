@@ -13,10 +13,6 @@ public class BacSiesReq extends BaseRequest {
     private String dienThoai;
     private String email;
     private String maNhaThuoc;
-    private Date created;
-    private Date modified;
-    private Integer createdByUserId;
-    private Integer modifiedByUserId;
     private Boolean active;
     private Integer storeId;
     private Integer masterId;
