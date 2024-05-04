@@ -61,9 +61,8 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
     @Override
     public Object searchPagePhieuKham(NoteMedicalsReq req) {
         Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
-        req.setRecordStatusId(RecordStatusContains.ACTIVE);
-        if(req.getRecordStatusId() != null){
-            req.setRecordStatusId(req.getRecordStatusId());
+        if(req.getRecordStatusId() == null){
+            req.setRecordStatusId(RecordStatusContains.ACTIVE);
         }
         Page<NoteMedicals> noteMedicals = hdrRepo.searchPagePhieuKham(req, pageable);
         for (NoteMedicals kk : noteMedicals.getContent()) {
