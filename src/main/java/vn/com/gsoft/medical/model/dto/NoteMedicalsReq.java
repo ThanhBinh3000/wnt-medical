@@ -16,7 +16,7 @@ public class NoteMedicalsReq extends BaseRequest {
 
     private Integer noteNumber;
     private Long idPatient;
-    private Integer idDoctor;
+    private Long idDoctor;
     private Date noteDate;
     private String includingDiseases;
     private String drugAllergy;

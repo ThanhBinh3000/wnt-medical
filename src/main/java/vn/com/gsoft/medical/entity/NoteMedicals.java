@@ -25,7 +25,7 @@ public class NoteMedicals extends BaseEntity {
     @Column(name = "IdPatient")
     private Long idPatient;
     @Column(name = "IdDoctor")
-    private Integer idDoctor;
+    private Long idDoctor;
     @Column(name = "NoteDate")
     private Date noteDate;
     @Column(name = "IncludingDiseases")

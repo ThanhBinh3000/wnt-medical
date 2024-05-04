@@ -39,7 +39,7 @@ public class MedicalFeeReceipts extends BaseEntity{
     @Column(name = "DebtAmount")
     private BigDecimal debtAmount;
     @Column(name = "IdCus")
-    private Integer idCus;
+    private Long idCus;
     @Column(name = "TypePayment")
     private Integer typePayment;
 }

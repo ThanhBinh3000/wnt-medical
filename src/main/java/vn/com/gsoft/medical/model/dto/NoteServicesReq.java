@@ -13,12 +13,12 @@ public class NoteServicesReq extends BaseRequest {
     private String clinicalExamination;
     private String object;
     private Date noteDate;
-    private Integer idCus;
+    private Long idCus;
     private String storeCode;
     private BigDecimal totalMoney;
     private String description;
     private Boolean isModified;
-    private Integer idDoctor;
+    private Long idDoctor;
     private String barCode;
     private Boolean isDeb;
     private Integer idNoteMedical;

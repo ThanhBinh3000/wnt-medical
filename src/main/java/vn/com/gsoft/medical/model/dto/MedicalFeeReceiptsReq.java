@@ -16,6 +16,6 @@ public class MedicalFeeReceiptsReq extends BaseRequest {
     private String description;
     private String descriptNotePay;
     private BigDecimal debtAmount;
-    private Integer idCus;
+    private Long idCus;
     private Integer typePayment;
 }

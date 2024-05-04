@@ -31,7 +31,7 @@ public class NoteServices extends BaseEntity {
     @Column(name = "NoteDate")
     private Date noteDate;
     @Column(name = "IdCus")
-    private Integer idCus;
+    private Long idCus;
     @Column(name = "StoreCode")
     private String storeCode;
     @Column(name = "TotalMoney")
@@ -42,7 +42,7 @@ public class NoteServices extends BaseEntity {
     @Column(name = "IsModified")
     private Boolean isModified;
     @Column(name = "IdDoctor")
-    private Integer idDoctor;
+    private Long idDoctor;
     @Column(name = "BarCode")
     private String barCode;
     @Column(name = "IsDeb")
@@ -63,5 +63,11 @@ public class NoteServices extends BaseEntity {
     private String templateDocument;
     @Column(name = "IsLock")
     private Boolean isLock;
+    @Transient
+    private String createdByUseText;
+    @Transient
+    private String customerName;
+    @Transient
+    private String doctorName;
 }
 
