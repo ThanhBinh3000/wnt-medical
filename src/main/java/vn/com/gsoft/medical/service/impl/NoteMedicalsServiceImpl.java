@@ -41,6 +41,7 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
     public Page<NoteMedicals> searchPage(NoteMedicalsReq req) throws Exception {
         Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
         req.setRecordStatusId(RecordStatusContains.ACTIVE);
+        req.setStatusNote(0);
         if(req.getRecordStatusId() != null){
             req.setRecordStatusId(req.getRecordStatusId());
         }
@@ -58,6 +59,26 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
         return noteMedicals;
     }
 
+    @Override
+    public Object searchPagePhieuKham(NoteMedicalsReq req) {
+        Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
+        req.setRecordStatusId(RecordStatusContains.ACTIVE);
+        if(req.getRecordStatusId() != null){
+            req.setRecordStatusId(req.getRecordStatusId());
+        }
+        Page<NoteMedicals> noteMedicals = hdrRepo.searchPagePhieuKham(req, pageable);
+        for (NoteMedicals kk : noteMedicals.getContent()) {
+            if (kk.getCreatedByUserId() != null && kk.getCreatedByUserId() > 0) {
+                Optional<UserProfile> userProfile = userProfileRepository.findById(kk.getCreatedByUserId());
+                userProfile.ifPresent(profile -> kk.setCreatedByUseText(profile.getTenDayDu()));
+            }
+            if (kk.getIdPatient() != null && kk.getIdPatient() > 0) {
+                Optional<KhachHangs> khachHangs = khachHangsRepository.findById(kk.getIdPatient());
+                khachHangs.ifPresent(hangs -> kk.setPatientName(hangs.getTenKhachHang()));
+            }
+        }
+        return noteMedicals;
+    }
     @Override
     public NoteMedicals detail(Long id) throws Exception {
         Profile userInfo = this.getLoggedUser();
@@ -83,4 +104,5 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
         }
         return noteMedicals;
     }
+
 }

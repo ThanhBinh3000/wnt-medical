@@ -30,6 +30,12 @@ public class NoteMedicalsController {
         return ResponseEntity.ok(ResponseUtils.ok(service.searchPage(objReq)));
     }
 
+    @PostMapping(value = PathContains.URL_SEARCH_PAGE+"-phieu-kham", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<BaseResponse> colectionPhieuKham(@RequestBody NoteMedicalsReq objReq) throws Exception {
+        return ResponseEntity.ok(ResponseUtils.ok(service.searchPagePhieuKham(objReq)));
+    }
+
 
     @PostMapping(value = PathContains.URL_SEARCH_LIST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
