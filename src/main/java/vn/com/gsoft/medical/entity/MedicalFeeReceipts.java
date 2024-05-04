@@ -1,9 +1,6 @@
 package vn.com.gsoft.medical.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,5 +39,8 @@ public class MedicalFeeReceipts extends BaseEntity{
     private Long idCus;
     @Column(name = "TypePayment")
     private Integer typePayment;
+
+    @Transient
+    private String customerName;
 }
 

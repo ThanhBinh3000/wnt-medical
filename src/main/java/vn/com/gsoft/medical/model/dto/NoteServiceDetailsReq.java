@@ -14,12 +14,10 @@ import java.util.Date;
 @Data
 public class NoteServiceDetailsReq extends BaseRequest {
 
-    private Integer idNoteDetailService;
-    private Integer idNoteService;
+    private Long idNoteService;
     private Integer drugId;
     private BigDecimal amount;
     private BigDecimal retailOutPrice;
-    private Integer recordStatusID;
     private String storeCode;
     private Integer createdById;
     private Date createdDate;

@@ -10,6 +10,7 @@ import vn.com.gsoft.medical.model.system.BaseRequest;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -69,5 +70,7 @@ public class NoteServices extends BaseEntity {
     private String customerName;
     @Transient
     private String doctorName;
+    @Transient
+    private List<NoteServiceDetails> chiTiets;
 }
 

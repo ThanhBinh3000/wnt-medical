@@ -1,5 +1,6 @@
 package vn.com.gsoft.medical.repository;
 
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,15 +12,13 @@ import vn.com.gsoft.medical.model.dto.NoteServiceDetailsReq;
 import java.util.List;
 
 @Repository
-public interface NoteServiceDetailsRepository extends BaseRepository<NoteServiceDetails, NoteServiceDetailsReq, Long> {
+public interface NoteServiceDetailsRepository extends CrudRepository<NoteServiceDetails, Long> {
   @Query("SELECT c FROM NoteServiceDetails c " +
          "WHERE 1=1 "
-          + " AND (:#{#param.idNoteDetailService} IS NULL OR c.idNoteDetailService = :#{#param.idNoteDetailService}) "
           + " AND (:#{#param.idNoteService} IS NULL OR c.idNoteService = :#{#param.idNoteService}) "
           + " AND (:#{#param.drugId} IS NULL OR c.drugId = :#{#param.drugId}) "
           + " AND (:#{#param.amount} IS NULL OR c.amount = :#{#param.amount}) "
           + " AND (:#{#param.retailOutPrice} IS NULL OR c.retailOutPrice = :#{#param.retailOutPrice}) "
-          + " AND (:#{#param.recordStatusID} IS NULL OR c.recordStatusID = :#{#param.recordStatusID}) "
           + " AND (:#{#param.storeCode} IS NULL OR lower(c.storeCode) LIKE lower(concat('%',CONCAT(:#{#param.storeCode},'%'))))"
           + " AND (:#{#param.createdById} IS NULL OR c.createdById = :#{#param.createdById}) "
           + " AND (:#{#param.updatedById} IS NULL OR c.updatedById = :#{#param.updatedById}) "
@@ -32,19 +31,17 @@ public interface NoteServiceDetailsRepository extends BaseRepository<NoteService
           + " AND (:#{#param.textDocument} IS NULL OR lower(c.textDocument) LIKE lower(concat('%',CONCAT(:#{#param.textDocument},'%'))))"
           + " AND (:#{#param.resultImage1} IS NULL OR lower(c.resultImage1) LIKE lower(concat('%',CONCAT(:#{#param.resultImage1},'%'))))"
           + " AND (:#{#param.resultImage2} IS NULL OR lower(c.resultImage2) LIKE lower(concat('%',CONCAT(:#{#param.resultImage2},'%'))))"
-          + " ORDER BY c.idNoteDetailService desc"
+          + " ORDER BY c.id desc"
   )
   Page<NoteServiceDetails> searchPage(@Param("param") NoteServiceDetailsReq param, Pageable pageable);
   
   
   @Query("SELECT c FROM NoteServiceDetails c " +
          "WHERE 1=1 "
-          + " AND (:#{#param.idNoteDetailService} IS NULL OR c.idNoteDetailService = :#{#param.idNoteDetailService}) "
           + " AND (:#{#param.idNoteService} IS NULL OR c.idNoteService = :#{#param.idNoteService}) "
           + " AND (:#{#param.drugId} IS NULL OR c.drugId = :#{#param.drugId}) "
           + " AND (:#{#param.amount} IS NULL OR c.amount = :#{#param.amount}) "
           + " AND (:#{#param.retailOutPrice} IS NULL OR c.retailOutPrice = :#{#param.retailOutPrice}) "
-          + " AND (:#{#param.recordStatusID} IS NULL OR c.recordStatusID = :#{#param.recordStatusID}) "
           + " AND (:#{#param.storeCode} IS NULL OR lower(c.storeCode) LIKE lower(concat('%',CONCAT(:#{#param.storeCode},'%'))))"
           + " AND (:#{#param.createdById} IS NULL OR c.createdById = :#{#param.createdById}) "
           + " AND (:#{#param.updatedById} IS NULL OR c.updatedById = :#{#param.updatedById}) "
@@ -57,8 +54,9 @@ public interface NoteServiceDetailsRepository extends BaseRepository<NoteService
           + " AND (:#{#param.textDocument} IS NULL OR lower(c.textDocument) LIKE lower(concat('%',CONCAT(:#{#param.textDocument},'%'))))"
           + " AND (:#{#param.resultImage1} IS NULL OR lower(c.resultImage1) LIKE lower(concat('%',CONCAT(:#{#param.resultImage1},'%'))))"
           + " AND (:#{#param.resultImage2} IS NULL OR lower(c.resultImage2) LIKE lower(concat('%',CONCAT(:#{#param.resultImage2},'%'))))"
-          + " ORDER BY c.idNoteDetailService desc"
+          + " ORDER BY c.id desc"
   )
   List<NoteServiceDetails> searchList(@Param("param") NoteServiceDetailsReq param);
 
+  List<NoteServiceDetails> findByIdNoteService(Long idNoteDetailService);
 }

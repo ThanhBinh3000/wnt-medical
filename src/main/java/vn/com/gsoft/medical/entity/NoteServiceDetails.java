@@ -15,24 +15,20 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "NoteServiceDetails")
-public class NoteServiceDetails extends BaseEntity {
+public class NoteServiceDetails{
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "IdNoteDetailService")
-    private Integer idNoteDetailService;
     @Column(name = "IdNoteService")
-    private Integer idNoteService;
+    private Long idNoteService;
     @Column(name = "DrugId")
     private Integer drugId;
     @Column(name = "Amount")
     private BigDecimal amount;
     @Column(name = "RetailOutPrice")
     private BigDecimal retailOutPrice;
-    @Column(name = "RecordStatusID")
-    private Integer recordStatusID;
     @Column(name = "StoreCode")
     private String storeCode;
     @Column(name = "CreatedById")

@@ -13,10 +13,7 @@ import vn.com.gsoft.medical.entity.NoteServices;
 import vn.com.gsoft.medical.entity.UserProfile;
 import vn.com.gsoft.medical.model.dto.NoteServicesReq;
 import vn.com.gsoft.medical.model.system.Profile;
-import vn.com.gsoft.medical.repository.BacSiesRepository;
-import vn.com.gsoft.medical.repository.KhachHangsRepository;
-import vn.com.gsoft.medical.repository.NoteServicesRepository;
-import vn.com.gsoft.medical.repository.UserProfileRepository;
+import vn.com.gsoft.medical.repository.*;
 import vn.com.gsoft.medical.service.NoteServicesService;
 
 import java.util.Optional;
@@ -27,6 +24,7 @@ import java.util.Optional;
 public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteServicesReq, Long> implements NoteServicesService {
 
     private NoteServicesRepository hdrRepo;
+    private NoteServiceDetailsRepository noteServiceDetailsRepository;
     private UserProfileRepository userProfileRepository;
     private KhachHangsRepository khachHangsRepository;
 	private BacSiesRepository bacSiesRepository;
@@ -34,18 +32,23 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
     @Autowired
     public NoteServicesServiceImpl(NoteServicesRepository hdrRepo, UserProfileRepository userProfileRepository,
                                    KhachHangsRepository khachHangsRepository,
-                                   BacSiesRepository bacSiesRepository) {
+                                   BacSiesRepository bacSiesRepository,
+                                   NoteServiceDetailsRepository noteServiceDetailsRepository) {
         super(hdrRepo);
         this.hdrRepo = hdrRepo;
         this.userProfileRepository = userProfileRepository;
         this.khachHangsRepository = khachHangsRepository;
         this.bacSiesRepository =bacSiesRepository;
+        this.noteServiceDetailsRepository = noteServiceDetailsRepository;
     }
 
     @Override
     public Page<NoteServices> searchPage(NoteServicesReq req) throws Exception {
         Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
         req.setRecordStatusId(RecordStatusContains.ACTIVE);
+        if(req.getRecordStatusId() != null){
+            req.setRecordStatusId(req.getRecordStatusId());
+        }
         Page<NoteServices> noteServices = hdrRepo.searchPage(req, pageable);
         for (NoteServices kk : noteServices.getContent()) {
             if (kk.getCreatedByUserId() != null && kk.getCreatedByUserId() > 0) {
@@ -91,6 +94,7 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
             Optional<BacSies> bacSies = bacSiesRepository.findById(noteServices.getIdDoctor());
             bacSies.ifPresent(sies -> noteServices.setDoctorName(sies.getTenBacSy()));
         }
+        noteServices.setChiTiets(noteServiceDetailsRepository.findByIdNoteService(noteServices.getId()));
         return noteServices;
     }
 }
