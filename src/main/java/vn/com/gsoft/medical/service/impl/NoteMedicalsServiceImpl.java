@@ -40,10 +40,9 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
     @Override
     public Page<NoteMedicals> searchPage(NoteMedicalsReq req) throws Exception {
         Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
-        req.setRecordStatusId(RecordStatusContains.ACTIVE);
         req.setStatusNote(0);
-        if(req.getRecordStatusId() != null){
-            req.setRecordStatusId(req.getRecordStatusId());
+        if(req.getRecordStatusId() == null){
+            req.setRecordStatusId(RecordStatusContains.ACTIVE);
         }
         Page<NoteMedicals> noteMedicals = hdrRepo.searchPage(req, pageable);
         for (NoteMedicals kk : noteMedicals.getContent()) {

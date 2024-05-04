@@ -45,9 +45,8 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
     @Override
     public Page<NoteServices> searchPage(NoteServicesReq req) throws Exception {
         Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
-        req.setRecordStatusId(RecordStatusContains.ACTIVE);
-        if(req.getRecordStatusId() != null){
-            req.setRecordStatusId(req.getRecordStatusId());
+        if(req.getRecordStatusId() == null){
+            req.setRecordStatusId(RecordStatusContains.ACTIVE);
         }
         Page<NoteServices> noteServices = hdrRepo.searchPage(req, pageable);
         for (NoteServices kk : noteServices.getContent()) {
