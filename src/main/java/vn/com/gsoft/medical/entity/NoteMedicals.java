@@ -84,5 +84,7 @@ public class NoteMedicals extends BaseEntity {
     private String createdByUseText;
     @Transient
     private String patientName;
+    @Transient
+    private String doctorName;
 }
 

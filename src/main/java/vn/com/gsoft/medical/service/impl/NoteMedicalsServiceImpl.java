@@ -7,11 +7,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.com.gsoft.medical.constant.RecordStatusContains;
+import vn.com.gsoft.medical.entity.BacSies;
 import vn.com.gsoft.medical.entity.KhachHangs;
 import vn.com.gsoft.medical.entity.NoteMedicals;
 import vn.com.gsoft.medical.entity.UserProfile;
 import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
 import vn.com.gsoft.medical.model.system.Profile;
+import vn.com.gsoft.medical.repository.BacSiesRepository;
 import vn.com.gsoft.medical.repository.KhachHangsRepository;
 import vn.com.gsoft.medical.repository.NoteMedicalsRepository;
 import vn.com.gsoft.medical.repository.UserProfileRepository;
@@ -27,14 +29,17 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
     private NoteMedicalsRepository hdrRepo;
     private UserProfileRepository userProfileRepository;
     private KhachHangsRepository khachHangsRepository;
+    private BacSiesRepository bacSiesRepository;
 
     @Autowired
     public NoteMedicalsServiceImpl(NoteMedicalsRepository hdrRepo, UserProfileRepository userProfileRepository,
-                                   KhachHangsRepository khachHangsRepository) {
+                                   KhachHangsRepository khachHangsRepository,
+                                   BacSiesRepository bacSiesRepository) {
         super(hdrRepo);
         this.hdrRepo = hdrRepo;
         this.userProfileRepository = userProfileRepository;
         this.khachHangsRepository = khachHangsRepository;
+        this.bacSiesRepository =bacSiesRepository;
     }
 
     @Override
@@ -53,6 +58,10 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
             if (kk.getIdPatient() != null && kk.getIdPatient() > 0) {
                 Optional<KhachHangs> khachHangs = khachHangsRepository.findById(kk.getIdPatient());
                 khachHangs.ifPresent(hangs -> kk.setPatientName(hangs.getTenKhachHang()));
+            }
+            if (kk.getIdDoctor() != null && kk.getIdDoctor() > 0) {
+                Optional<BacSies> bacSies = bacSiesRepository.findById(kk.getIdDoctor());
+                bacSies.ifPresent(hangs -> kk.setDoctorName(bacSies.get().getTenBacSy()));
             }
         }
         return noteMedicals;
@@ -73,6 +82,10 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
             if (kk.getIdPatient() != null && kk.getIdPatient() > 0) {
                 Optional<KhachHangs> khachHangs = khachHangsRepository.findById(kk.getIdPatient());
                 khachHangs.ifPresent(hangs -> kk.setPatientName(hangs.getTenKhachHang()));
+            }
+            if (kk.getIdDoctor() != null && kk.getIdDoctor() > 0) {
+                Optional<BacSies> bacSies = bacSiesRepository.findById(kk.getIdDoctor());
+                bacSies.ifPresent(hangs -> kk.setDoctorName(bacSies.get().getTenBacSy()));
             }
         }
         return noteMedicals;
@@ -99,6 +112,10 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
         if (noteMedicals.getIdPatient() != null && noteMedicals.getIdPatient() > 0) {
             Optional<KhachHangs> khachHangs = khachHangsRepository.findById(noteMedicals.getIdPatient());
             khachHangs.ifPresent(hangs -> noteMedicals.setPatientName(hangs.getTenKhachHang()));
+        }
+        if (noteMedicals.getIdDoctor() != null && noteMedicals.getIdDoctor() > 0) {
+            Optional<BacSies> bacSies = bacSiesRepository.findById(noteMedicals.getIdDoctor());
+            bacSies.ifPresent(hangs -> noteMedicals.setDoctorName(bacSies.get().getTenBacSy()));
         }
         return noteMedicals;
     }
