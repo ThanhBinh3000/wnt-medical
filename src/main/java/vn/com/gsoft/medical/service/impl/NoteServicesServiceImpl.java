@@ -57,6 +57,7 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
             if (kk.getIdCus() != null && kk.getIdCus() > 0) {
                 Optional<KhachHangs> khachHangs = khachHangsRepository.findById(kk.getIdCus());
                 khachHangs.ifPresent(khachHang -> kk.setCustomerName(khachHang.getTenKhachHang()));
+                khachHangs.ifPresent(kk::setCustomer);
             }
             if (kk.getIdDoctor() != null && kk.getIdDoctor() > 0) {
                 Optional<BacSies> bacSies = bacSiesRepository.findById(kk.getIdDoctor());
@@ -88,6 +89,7 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
         if (noteServices.getIdCus() != null && noteServices.getIdCus() > 0) {
             Optional<KhachHangs> khachHangs = khachHangsRepository.findById(noteServices.getIdCus());
             khachHangs.ifPresent(khachHang -> noteServices.setCustomerName(khachHang.getTenKhachHang()));
+            khachHangs.ifPresent(noteServices::setCustomer);
         }
         if (noteServices.getIdDoctor() != null && noteServices.getIdDoctor() > 0) {
             Optional<BacSies> bacSies = bacSiesRepository.findById(noteServices.getIdDoctor());

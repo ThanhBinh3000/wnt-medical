@@ -69,6 +69,8 @@ public class NoteServices extends BaseEntity {
     @Transient
     private String customerName;
     @Transient
+    private KhachHangs customer;
+    @Transient
     private String doctorName;
     @Transient
     private List<NoteServiceDetails> chiTiets;
