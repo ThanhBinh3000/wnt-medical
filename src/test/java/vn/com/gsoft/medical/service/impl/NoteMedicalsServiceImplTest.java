@@ -49,7 +49,7 @@ class NoteMedicalsServiceImplTest {
 
     @Test
     void detail() throws Exception {
-        NoteMedicals detail = noteMedicalsService.detail(15022l);
+        NoteMedicals detail = noteMedicalsService.detail(15014l);
         assert detail != null;
     }
 }

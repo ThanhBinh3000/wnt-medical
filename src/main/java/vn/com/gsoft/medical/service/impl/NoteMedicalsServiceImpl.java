@@ -7,19 +7,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.com.gsoft.medical.constant.RecordStatusContains;
-import vn.com.gsoft.medical.entity.BacSies;
-import vn.com.gsoft.medical.entity.KhachHangs;
-import vn.com.gsoft.medical.entity.NoteMedicals;
-import vn.com.gsoft.medical.entity.UserProfile;
+import vn.com.gsoft.medical.entity.*;
 import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
 import vn.com.gsoft.medical.model.system.Profile;
-import vn.com.gsoft.medical.repository.BacSiesRepository;
-import vn.com.gsoft.medical.repository.KhachHangsRepository;
-import vn.com.gsoft.medical.repository.NoteMedicalsRepository;
-import vn.com.gsoft.medical.repository.UserProfileRepository;
+import vn.com.gsoft.medical.repository.*;
 import vn.com.gsoft.medical.service.NoteMedicalsService;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -30,23 +27,26 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
     private UserProfileRepository userProfileRepository;
     private KhachHangsRepository khachHangsRepository;
     private BacSiesRepository bacSiesRepository;
+    private ESDiagnoseRepository diagnoseRepository;
 
     @Autowired
     public NoteMedicalsServiceImpl(NoteMedicalsRepository hdrRepo, UserProfileRepository userProfileRepository,
                                    KhachHangsRepository khachHangsRepository,
+                                   ESDiagnoseRepository diagnoseRepository,
                                    BacSiesRepository bacSiesRepository) {
         super(hdrRepo);
         this.hdrRepo = hdrRepo;
         this.userProfileRepository = userProfileRepository;
         this.khachHangsRepository = khachHangsRepository;
-        this.bacSiesRepository =bacSiesRepository;
+        this.bacSiesRepository = bacSiesRepository;
+        this.diagnoseRepository = diagnoseRepository;
     }
 
     @Override
     public Page<NoteMedicals> searchPage(NoteMedicalsReq req) throws Exception {
         Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
         req.setStatusNote(0);
-        if(req.getRecordStatusId() == null){
+        if (req.getRecordStatusId() == null) {
             req.setRecordStatusId(RecordStatusContains.ACTIVE);
         }
         Page<NoteMedicals> noteMedicals = hdrRepo.searchPage(req, pageable);
@@ -70,7 +70,7 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
     @Override
     public Object searchPagePhieuKham(NoteMedicalsReq req) {
         Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
-        if(req.getRecordStatusId() == null){
+        if (req.getRecordStatusId() == null) {
             req.setRecordStatusId(RecordStatusContains.ACTIVE);
         }
         Page<NoteMedicals> noteMedicals = hdrRepo.searchPagePhieuKham(req, pageable);
@@ -90,6 +90,7 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
         }
         return noteMedicals;
     }
+
     @Override
     public NoteMedicals detail(Long id) throws Exception {
         Profile userInfo = this.getLoggedUser();
@@ -117,6 +118,15 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
             Optional<BacSies> bacSies = bacSiesRepository.findById(noteMedicals.getIdDoctor());
             bacSies.ifPresent(hangs -> noteMedicals.setDoctorName(bacSies.get().getTenBacSy()));
         }
+        if (noteMedicals.getDiagnosticIds() != null) {
+            String[] diagnosticIds = noteMedicals.getDiagnosticIds().split(",");
+            List<Long> ids = Arrays.stream(diagnosticIds)
+                    .map(Long::parseLong)
+                    .collect(Collectors.toList());
+            List<ESDiagnose> diagnose = diagnoseRepository.findByIdIn(ids);
+            noteMedicals.setDiagnostics(diagnose);
+        }
+
         return noteMedicals;
     }
 

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -86,5 +87,7 @@ public class NoteMedicals extends BaseEntity {
     private String patientName;
     @Transient
     private String doctorName;
+    @Transient
+    private List<ESDiagnose> diagnostics;
 }
 
