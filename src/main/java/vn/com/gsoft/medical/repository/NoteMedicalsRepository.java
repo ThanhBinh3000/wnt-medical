@@ -36,12 +36,15 @@ public interface NoteMedicalsRepository extends BaseRepository<NoteMedicals, Not
           + " AND (:#{#param.clinicCode} IS NULL OR c.clinicCode = :#{#param.clinicCode}) "
           + " AND (:#{#param.statusNote} IS NULL OR c.statusNote = :#{#param.statusNote}) "
           + " AND (:#{#param.orderWait} IS NULL OR c.orderWait = :#{#param.orderWait}) "
+          + " AND (:#{#param.isDeb} IS NULL OR c.isDeb = :#{#param.isDeb}) "
           + " AND (:#{#param.reasonExamination} IS NULL OR lower(c.reasonExamination) LIKE lower(concat('%',CONCAT(:#{#param.reasonExamination},'%'))))"
           + " AND (:#{#param.idServiceExam} IS NULL OR c.idServiceExam = :#{#param.idServiceExam}) "
           + " AND (:#{#param.idDiagnostic} IS NULL OR c.idDiagnostic = :#{#param.idDiagnostic}) "
           + " AND (:#{#param.testResults} IS NULL OR lower(c.testResults) LIKE lower(concat('%',CONCAT(:#{#param.testResults},'%'))))"
           + " AND (:#{#param.diagnosticIds} IS NULL OR lower(c.diagnosticIds) LIKE lower(concat('%',CONCAT(:#{#param.diagnosticIds},'%'))))"
           + " AND (:#{#param.diagnosticOther} IS NULL OR lower(c.diagnosticOther) LIKE lower(concat('%',CONCAT(:#{#param.diagnosticOther},'%'))))"
+          + " AND (:#{#param.fromDateCreated} IS NULL OR c.created >= :#{#param.fromDateCreated}) "
+          + " AND (:#{#param.toDateCreated} IS NULL OR c.created <= :#{#param.toDateCreated}) "
           + " ORDER BY c.id desc"
   )
   Page<NoteMedicals> searchPage(@Param("param") NoteMedicalsReq param, Pageable pageable);
@@ -70,12 +73,15 @@ public interface NoteMedicalsRepository extends BaseRepository<NoteMedicals, Not
           + " AND (:#{#param.clinicCode} IS NULL OR c.clinicCode = :#{#param.clinicCode}) "
           + " AND (:#{#param.statusNote} IS NULL OR c.statusNote != 0) "
           + " AND (:#{#param.orderWait} IS NULL OR c.orderWait = :#{#param.orderWait}) "
+          + " AND (:#{#param.isDeb} IS NULL OR c.isDeb = :#{#param.isDeb}) "
           + " AND (:#{#param.reasonExamination} IS NULL OR lower(c.reasonExamination) LIKE lower(concat('%',CONCAT(:#{#param.reasonExamination},'%'))))"
           + " AND (:#{#param.idServiceExam} IS NULL OR c.idServiceExam = :#{#param.idServiceExam}) "
           + " AND (:#{#param.idDiagnostic} IS NULL OR c.idDiagnostic = :#{#param.idDiagnostic}) "
           + " AND (:#{#param.testResults} IS NULL OR lower(c.testResults) LIKE lower(concat('%',CONCAT(:#{#param.testResults},'%'))))"
           + " AND (:#{#param.diagnosticIds} IS NULL OR lower(c.diagnosticIds) LIKE lower(concat('%',CONCAT(:#{#param.diagnosticIds},'%'))))"
           + " AND (:#{#param.diagnosticOther} IS NULL OR lower(c.diagnosticOther) LIKE lower(concat('%',CONCAT(:#{#param.diagnosticOther},'%'))))"
+          + " AND (:#{#param.fromDateCreated} IS NULL OR c.noteDate >= :#{#param.fromDateCreated}) "
+          + " AND (:#{#param.toDateCreated} IS NULL OR c.noteDate <= :#{#param.toDateCreated}) "
           + " ORDER BY c.id desc"
   )
   Page<NoteMedicals> searchPagePhieuKham(@Param("param") NoteMedicalsReq param, Pageable pageable);
@@ -105,12 +111,15 @@ public interface NoteMedicalsRepository extends BaseRepository<NoteMedicals, Not
           + " AND (:#{#param.clinicCode} IS NULL OR c.clinicCode = :#{#param.clinicCode}) "
           + " AND (:#{#param.statusNote} IS NULL OR c.statusNote = :#{#param.statusNote}) "
           + " AND (:#{#param.orderWait} IS NULL OR c.orderWait = :#{#param.orderWait}) "
+          + " AND (:#{#param.isDeb} IS NULL OR c.isDeb = :#{#param.isDeb}) "
           + " AND (:#{#param.reasonExamination} IS NULL OR lower(c.reasonExamination) LIKE lower(concat('%',CONCAT(:#{#param.reasonExamination},'%'))))"
           + " AND (:#{#param.idServiceExam} IS NULL OR c.idServiceExam = :#{#param.idServiceExam}) "
           + " AND (:#{#param.idDiagnostic} IS NULL OR c.idDiagnostic = :#{#param.idDiagnostic}) "
           + " AND (:#{#param.testResults} IS NULL OR lower(c.testResults) LIKE lower(concat('%',CONCAT(:#{#param.testResults},'%'))))"
           + " AND (:#{#param.diagnosticIds} IS NULL OR lower(c.diagnosticIds) LIKE lower(concat('%',CONCAT(:#{#param.diagnosticIds},'%'))))"
           + " AND (:#{#param.diagnosticOther} IS NULL OR lower(c.diagnosticOther) LIKE lower(concat('%',CONCAT(:#{#param.diagnosticOther},'%'))))"
+          + " AND (:#{#param.fromDateCreated} IS NULL OR c.created >= :#{#param.fromDateCreated}) "
+          + " AND (:#{#param.toDateCreated} IS NULL OR c.created <= :#{#param.toDateCreated}) "
           + " ORDER BY c.id desc"
   )
   List<NoteMedicals> searchList(@Param("param") NoteMedicalsReq param);
