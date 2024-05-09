@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.com.gsoft.medical.constant.PathContains;
-import vn.com.gsoft.medical.model.dto.MedicalFeeReceiptsReq;
 import vn.com.gsoft.medical.model.dto.NoteServicesReq;
 import vn.com.gsoft.medical.model.system.BaseResponse;
 import vn.com.gsoft.medical.service.NoteServicesService;
@@ -31,6 +30,11 @@ public class NoteServicesController {
     return ResponseEntity.ok(ResponseUtils.ok(service.searchPage(objReq)));
   }
 
+  @PostMapping(value = PathContains.URL_SEARCH_PAGE+"-lieu-trinh", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> colectionLieuTrinh(@RequestBody NoteServicesReq objReq) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.searchPageLieuTrinh(objReq)));
+  }
 
   @PostMapping(value = PathContains.URL_SEARCH_LIST, produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)

@@ -74,5 +74,15 @@ public class NoteServices extends BaseEntity {
     private String doctorName;
     @Transient
     private List<NoteServiceDetails> chiTiets;
+    @Transient
+    private String tenDichVu;
+    @Transient
+    private Integer countNumbers;
+    @Transient
+    private BigDecimal amount;
+    @Transient
+    private Integer lastCountNumbers;
+    @Transient
+    private BigDecimal retailOutPrice;
 }
 

@@ -88,4 +88,29 @@ public class NoteMedicalsController {
     public ResponseEntity<BaseResponse> restore(@Valid @RequestBody NoteMedicalsReq idSearchReq) throws Exception {
         return ResponseEntity.ok(ResponseUtils.ok(service.restore(idSearchReq.getId())));
     }
+
+    @PostMapping(value = PathContains.URL_CANCEL, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<BaseResponse> cancel(@Valid @RequestBody NoteMedicalsReq idSearchReq) throws Exception {
+        return ResponseEntity.ok(ResponseUtils.ok(service.cancel(idSearchReq.getId())));
+    }
+
+    @GetMapping(value = "get-new-note-wait-number", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<BaseResponse> getNewNoteWaitNumber() throws Exception {
+        return ResponseEntity.ok(ResponseUtils.ok(service.getNewNoteWaitNumber()));
+    }
+
+    @PostMapping(value = PathContains.URL_CREATE + "-note-wait", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<BaseResponse> insertNoteWait(@Valid @RequestBody NoteMedicalsReq objReq) throws Exception {
+        return ResponseEntity.ok(ResponseUtils.ok(service.createNoteWait(objReq)));
+    }
+
+
+    @PostMapping(value = PathContains.URL_UPDATE + "-note-wait", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<BaseResponse> updateNoteWait(@Valid @RequestBody NoteMedicalsReq objReq) throws Exception {
+        return ResponseEntity.ok(ResponseUtils.ok(service.updateNoteWait(objReq)));
+    }
 }

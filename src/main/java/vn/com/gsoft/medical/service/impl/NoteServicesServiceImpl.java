@@ -1,21 +1,25 @@
 package vn.com.gsoft.medical.service.impl;
 
+import jakarta.persistence.Tuple;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.com.gsoft.medical.constant.RecordStatusContains;
-import vn.com.gsoft.medical.entity.BacSies;
-import vn.com.gsoft.medical.entity.KhachHangs;
-import vn.com.gsoft.medical.entity.NoteServices;
-import vn.com.gsoft.medical.entity.UserProfile;
+import vn.com.gsoft.medical.entity.*;
+import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
+import vn.com.gsoft.medical.model.dto.NoteServicesLieuTrinhRes;
 import vn.com.gsoft.medical.model.dto.NoteServicesReq;
 import vn.com.gsoft.medical.model.system.Profile;
 import vn.com.gsoft.medical.repository.*;
 import vn.com.gsoft.medical.service.NoteServicesService;
+import vn.com.gsoft.medical.util.system.DataUtils;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Optional;
 
 
@@ -64,6 +68,26 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
                 bacSies.ifPresent(sies -> kk.setDoctorName(sies.getTenBacSy()));
             }
         }
+        return noteServices;
+    }
+
+    @Override
+    public Object searchPageLieuTrinh(NoteServicesReq req) {
+        Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
+        if(req.getRecordStatusId() == null){
+            req.setRecordStatusId(RecordStatusContains.ACTIVE);
+        }
+        Page<NoteServicesLieuTrinhRes> results =   DataUtils.convertPage(hdrRepo.searchPageLieuTrinh(req, pageable), NoteServicesLieuTrinhRes.class);
+        Page<NoteServices> noteServices = results.map(result -> {
+            final NoteServices res = new NoteServices();
+            BeanUtils.copyProperties(result, res);
+            if (res.getIdCus() != null && res.getIdCus() > 0) {
+                Optional<KhachHangs> khachHangs = khachHangsRepository.findById(res.getIdCus());
+                khachHangs.ifPresent(khachHang -> res.setCustomerName(khachHang.getTenKhachHang()));
+                khachHangs.ifPresent(res::setCustomer);
+            }
+            return res;
+        });
         return noteServices;
     }
 
