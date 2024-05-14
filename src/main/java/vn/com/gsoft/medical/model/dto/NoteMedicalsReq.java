@@ -1,5 +1,6 @@
 package vn.com.gsoft.medical.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +11,7 @@ import vn.com.gsoft.medical.model.system.BaseRequest;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class NoteMedicalsReq extends BaseRequest {
@@ -36,13 +38,24 @@ public class NoteMedicalsReq extends BaseRequest {
     private String height;
     private Integer clinicCode;
     private Integer statusNote;
+    private List<Integer> statusNotes;
     private Integer orderWait;
     private String reasonExamination;
     private Integer idServiceExam;
     private Integer idDiagnostic;
     private String testResults;
+    private String diagnosticId;
     private String diagnosticIds;
     private String diagnosticOther;
     private Boolean isLock;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
+    private Date fromDateNote;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
+    private Date toDateNote;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
+    private Date fromDateReExamination;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
+    private Date toDateReExamination;
+    private Long maNhomKhachHang;
 }
 

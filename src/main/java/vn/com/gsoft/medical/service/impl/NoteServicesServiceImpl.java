@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import vn.com.gsoft.medical.constant.RecordStatusContains;
 import vn.com.gsoft.medical.entity.*;
 import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
+import vn.com.gsoft.medical.model.dto.NoteServicesChoThucHienRes;
 import vn.com.gsoft.medical.model.dto.NoteServicesLieuTrinhRes;
 import vn.com.gsoft.medical.model.dto.NoteServicesReq;
 import vn.com.gsoft.medical.model.system.Profile;
@@ -32,18 +33,23 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
     private UserProfileRepository userProfileRepository;
     private KhachHangsRepository khachHangsRepository;
 	private BacSiesRepository bacSiesRepository;
-
+    private ThuocsRepository thuocsRepository;
+    private NhomThuocsRepository nhomThuocsRepository;
     @Autowired
     public NoteServicesServiceImpl(NoteServicesRepository hdrRepo, UserProfileRepository userProfileRepository,
                                    KhachHangsRepository khachHangsRepository,
                                    BacSiesRepository bacSiesRepository,
-                                   NoteServiceDetailsRepository noteServiceDetailsRepository) {
+                                   NoteServiceDetailsRepository noteServiceDetailsRepository,
+                                   ThuocsRepository thuocsRepository,
+                                   NhomThuocsRepository nhomThuocsRepository) {
         super(hdrRepo);
         this.hdrRepo = hdrRepo;
         this.userProfileRepository = userProfileRepository;
         this.khachHangsRepository = khachHangsRepository;
         this.bacSiesRepository =bacSiesRepository;
         this.noteServiceDetailsRepository = noteServiceDetailsRepository;
+        this.thuocsRepository = thuocsRepository;
+        this.nhomThuocsRepository = nhomThuocsRepository;
     }
 
     @Override
@@ -78,7 +84,7 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
             req.setRecordStatusId(RecordStatusContains.ACTIVE);
         }
         Page<NoteServicesLieuTrinhRes> results =   DataUtils.convertPage(hdrRepo.searchPageLieuTrinh(req, pageable), NoteServicesLieuTrinhRes.class);
-        Page<NoteServices> noteServices = results.map(result -> {
+        return results.map(result -> {
             final NoteServices res = new NoteServices();
             BeanUtils.copyProperties(result, res);
             if (res.getIdCus() != null && res.getIdCus() > 0) {
@@ -86,9 +92,47 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
                 khachHangs.ifPresent(khachHang -> res.setCustomerName(khachHang.getTenKhachHang()));
                 khachHangs.ifPresent(res::setCustomer);
             }
+            if(res.getDrugId() != null && res.getDrugId() > 0){
+                Optional<Thuocs> dichVus = thuocsRepository.findById(res.getDrugId());
+                dichVus.ifPresent(res::setDichVu);
+            }
             return res;
         });
-        return noteServices;
+    }
+
+    @Override
+    public Object searchPageChoThucHien(NoteServicesReq req) {
+        Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
+        if(req.getRecordStatusId() == null){
+            req.setRecordStatusId(RecordStatusContains.ACTIVE);
+        }
+        Page<NoteServicesChoThucHienRes> results =   DataUtils.convertPage(hdrRepo.searchPageChoThucHien(req, pageable), NoteServicesChoThucHienRes.class);
+        return results.map(result -> {
+            final NoteServices res = new NoteServices();
+            BeanUtils.copyProperties(result, res);
+            if (res.getPerformerId() != null && res.getPerformerId() > 0) {
+                Optional<UserProfile> userProfile = userProfileRepository.findById(res.getPerformerId());
+                userProfile.ifPresent(profile -> res.setPerformerText(profile.getTenDayDu()));
+            }
+            if (res.getIdCus() != null && res.getIdCus() > 0) {
+                Optional<KhachHangs> khachHangs = khachHangsRepository.findById(res.getIdCus());
+                khachHangs.ifPresent(khachHang -> res.setCustomerName(khachHang.getTenKhachHang()));
+                khachHangs.ifPresent(res::setCustomer);
+            }
+            if (res.getIdDoctor() != null && res.getIdDoctor() > 0) {
+                Optional<BacSies> bacSies = bacSiesRepository.findById(res.getIdDoctor());
+                bacSies.ifPresent(sies -> res.setDoctorName(sies.getTenBacSy()));
+            }
+            if(res.getDrugId() != null && res.getDrugId() > 0){
+                Optional<Thuocs> dichVus = thuocsRepository.findById(res.getDrugId());
+                dichVus.ifPresent(res::setDichVu);
+                if(res.getDichVu() != null){
+                    Optional<NhomThuocs> nhomThuocs = nhomThuocsRepository.findById(res.getDichVu().getNhomThuocMaNhomThuoc());
+                    nhomThuocs.ifPresent(nhomThuoc -> res.getDichVu().setTenNhomThuoc(nhomThuoc.getTenNhomThuoc()));
+                }
+            }
+            return res;
+        });
     }
 
     @Override

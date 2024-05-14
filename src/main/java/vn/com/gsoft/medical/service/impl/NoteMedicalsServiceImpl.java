@@ -34,18 +34,21 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
     private KhachHangsRepository khachHangsRepository;
     private BacSiesRepository bacSiesRepository;
     private ESDiagnoseRepository diagnoseRepository;
+    private BenhBoYTeRepository benhBoYTeRepository;
 
     @Autowired
     public NoteMedicalsServiceImpl(NoteMedicalsRepository hdrRepo, UserProfileRepository userProfileRepository,
                                    KhachHangsRepository khachHangsRepository,
                                    ESDiagnoseRepository diagnoseRepository,
-                                   BacSiesRepository bacSiesRepository) {
+                                   BacSiesRepository bacSiesRepository,
+                                   BenhBoYTeRepository benhBoYTeRepository) {
         super(hdrRepo);
         this.hdrRepo = hdrRepo;
         this.userProfileRepository = userProfileRepository;
         this.khachHangsRepository = khachHangsRepository;
         this.bacSiesRepository = bacSiesRepository;
         this.diagnoseRepository = diagnoseRepository;
+        this.benhBoYTeRepository = benhBoYTeRepository;
     }
 
     @Override
@@ -68,6 +71,14 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
             if (kk.getIdDoctor() != null && kk.getIdDoctor() > 0) {
                 Optional<BacSies> bacSies = bacSiesRepository.findById(kk.getIdDoctor());
                 bacSies.ifPresent(hangs -> kk.setDoctorName(bacSies.get().getTenBacSy()));
+            }
+            if(kk.getDiagnosticIds() != null && !kk.getDiagnosticIds().isEmpty()){
+                String[] diagnosticIds = kk.getDiagnosticIds().split(",");
+                List<Long> ids = Arrays.stream(diagnosticIds)
+                        .map(Long::parseLong)
+                        .collect(Collectors.toList());
+                List<BenhBoYTe> benhBoYTes = benhBoYTeRepository.findByIdIn(ids);
+                kk.setDiagnostics(benhBoYTes);
             }
         }
         return noteMedicals;
@@ -130,8 +141,8 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
             List<Long> ids = Arrays.stream(diagnosticIds)
                     .map(Long::parseLong)
                     .collect(Collectors.toList());
-            List<ESDiagnose> diagnose = diagnoseRepository.findByIdIn(ids);
-            noteMedicals.setDiagnostics(diagnose);
+            List<BenhBoYTe> benhBoYTes = benhBoYTeRepository.findByIdIn(ids);
+            noteMedicals.setDiagnostics(benhBoYTes);
         }
 
         return noteMedicals;

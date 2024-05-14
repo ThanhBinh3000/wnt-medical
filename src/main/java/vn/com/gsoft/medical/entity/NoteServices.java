@@ -59,13 +59,15 @@ public class NoteServices extends BaseEntity {
     @Column(name = "PaymentScoreAmount")
     private BigDecimal paymentScoreAmount;
     @Column(name = "PerformerId")
-    private Integer performerId;
+    private Long performerId;
     @Column(name = "TemplateDocument")
     private String templateDocument;
     @Column(name = "IsLock")
     private Boolean isLock;
     @Transient
     private String createdByUseText;
+    @Transient
+    private String performerText;
     @Transient
     private String customerName;
     @Transient
@@ -75,7 +77,9 @@ public class NoteServices extends BaseEntity {
     @Transient
     private List<NoteServiceDetails> chiTiets;
     @Transient
-    private String tenDichVu;
+    private Thuocs dichVu;
+    @Transient
+    private Long drugId;
     @Transient
     private Integer countNumbers;
     @Transient
@@ -84,5 +88,7 @@ public class NoteServices extends BaseEntity {
     private Integer lastCountNumbers;
     @Transient
     private BigDecimal retailOutPrice;
+    @Transient
+    private Boolean idStatus;
 }
 

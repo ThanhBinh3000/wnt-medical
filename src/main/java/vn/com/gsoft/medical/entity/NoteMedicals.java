@@ -90,6 +90,6 @@ public class NoteMedicals extends BaseEntity {
     @Transient
     private String doctorName;
     @Transient
-    private List<ESDiagnose> diagnostics;
+    private List<BenhBoYTe> diagnostics;
 }
 

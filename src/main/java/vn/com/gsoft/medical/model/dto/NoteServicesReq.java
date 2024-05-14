@@ -1,5 +1,6 @@
 package vn.com.gsoft.medical.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import vn.com.gsoft.medical.model.system.BaseRequest;
 
@@ -29,5 +30,8 @@ public class NoteServicesReq extends BaseRequest {
     private Integer performerId;
     private String templateDocument;
     private Boolean isLock;
+    private Long maNhomKhachHang;
+    private Boolean idStatus;
+    private Long idClinic;
 }
 

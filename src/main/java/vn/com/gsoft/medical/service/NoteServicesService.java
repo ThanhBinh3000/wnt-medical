@@ -7,4 +7,5 @@ import vn.com.gsoft.medical.model.dto.NoteServicesReq;
 public interface NoteServicesService extends BaseService<NoteServices, NoteServicesReq, Long> {
 
     Object searchPageLieuTrinh(NoteServicesReq objReq);
+    Object searchPageChoThucHien(NoteServicesReq objReq);
 }
