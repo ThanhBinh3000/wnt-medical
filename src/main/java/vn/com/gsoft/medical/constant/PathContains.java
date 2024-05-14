@@ -18,6 +18,7 @@ public class PathContains {
     public static final String URL_PHIEU_KHAM = "/phieu-kham";
     public static final String URL_PHIEU_DICH_VU = "/phieu-dich-vu";
     public static final String URL_PHIEU_DICH_VU_CT = "/phieu-dich-vu-ct";
+    public static final String URL_BENH_BO_Y_TE = "/benh-bo-y-te";
 
 
 }

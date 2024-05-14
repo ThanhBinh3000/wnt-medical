@@ -36,6 +36,12 @@ public class NoteServicesController {
     return ResponseEntity.ok(ResponseUtils.ok(service.searchPageLieuTrinh(objReq)));
   }
 
+  @PostMapping(value = PathContains.URL_SEARCH_PAGE+"-cho-thuc-hien", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> colectionChoThucHien(@RequestBody NoteServicesReq objReq) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.searchPageChoThucHien(objReq)));
+  }
+
   @PostMapping(value = PathContains.URL_SEARCH_LIST, produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<BaseResponse> colectionList(@RequestBody NoteServicesReq objReq) throws Exception {
