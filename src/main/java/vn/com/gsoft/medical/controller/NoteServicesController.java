@@ -76,6 +76,13 @@ public class NoteServicesController {
     return ResponseEntity.ok(ResponseUtils.ok(service.delete(idSearchReq.getId())));
   }
 
+  @PostMapping(value = PathContains.URL_LOCK, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> lock(@Valid @RequestBody NoteServicesReq idSearchReq) throws Exception {
+    service.lockNoteService(idSearchReq);
+    return ResponseEntity.ok(ResponseUtils.ok(true));
+  }
+
 
   @PostMapping(value = PathContains.URL_DELETE_DATABASE, produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)

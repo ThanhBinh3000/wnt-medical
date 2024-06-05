@@ -8,4 +8,5 @@ public interface NoteServicesService extends BaseService<NoteServices, NoteServi
 
     Object searchPageLieuTrinh(NoteServicesReq objReq);
     Object searchPageChoThucHien(NoteServicesReq objReq);
+    void lockNoteService (NoteServicesReq objReq) throws Exception;
 }

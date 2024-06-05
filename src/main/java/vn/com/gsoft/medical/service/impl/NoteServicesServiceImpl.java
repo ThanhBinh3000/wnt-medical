@@ -136,6 +136,24 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
     }
 
     @Override
+    public void lockNoteService(NoteServicesReq objReq) throws Exception {
+        Profile userInfo = this.getLoggedUser();
+        if (userInfo == null)
+            throw new Exception("Bad request.");
+
+        Optional<NoteServices> optional = hdrRepo.findById(objReq.getId());
+        if (optional.isEmpty()) {
+            throw new Exception("Không tìm thấy dữ liệu.");
+        } else {
+            if (optional.get().getRecordStatusId() != RecordStatusContains.ACTIVE) {
+                throw new Exception("Không tìm thấy dữ liệu.");
+            }
+        }
+        optional.get().setIsLock(true);
+        hdrRepo.save(optional.get());
+    }
+
+    @Override
     public NoteServices detail(Long id) throws Exception {
         Profile userInfo = this.getLoggedUser();
         if (userInfo == null)
