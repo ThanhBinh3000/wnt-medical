@@ -10,6 +10,7 @@ import vn.com.gsoft.medical.entity.NoteServices;
 import vn.com.gsoft.medical.model.dto.NoteServicesReq;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface NoteServicesRepository extends BaseRepository<NoteServices, NoteServicesReq, Long> {
@@ -124,5 +125,11 @@ public interface NoteServicesRepository extends BaseRepository<NoteServices, Not
           + " ORDER BY c.id desc"
   )
   List<NoteServices> searchList(@Param("param") NoteServicesReq param);
+
+  @Query("SELECT t FROM NoteServices t WHERE t.barCode = :barCode AND t.storeCode = :maNhaThuoc  AND t.recordStatusId = :recordStatusId")
+  Optional<NoteServices> findByBarCode(String barCode, String maNhaThuoc, Long recordStatusId);
+
+  @Query("SELECT MAX(px.noteNumber) FROM NoteServices px where px.storeCode = ?1  ")
+  Long findByNoteNumberMax(String nhaThuocMaNhaThuoc);
 
 }

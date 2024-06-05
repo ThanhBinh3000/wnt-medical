@@ -55,6 +55,18 @@ public class NoteServicesController {
     return ResponseEntity.ok(ResponseUtils.ok(service.create(objReq)));
   }
 
+  @PostMapping(value = PathContains.URL_INIT, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity<BaseResponse> init(@Valid @RequestBody NoteServicesReq objReq) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.init(objReq)));
+  }
+
+  @GetMapping(value = PathContains.URL_BAR_CODE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity<BaseResponse> generateBarCode() throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.generateBarCode()));
+  }
+
 
   @PostMapping(value = PathContains.URL_UPDATE, produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.CREATED)

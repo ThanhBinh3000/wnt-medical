@@ -21,7 +21,9 @@ import vn.com.gsoft.medical.util.system.DataUtils;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -151,6 +153,59 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
         }
         optional.get().setIsLock(true);
         hdrRepo.save(optional.get());
+    }
+
+    @Override
+    public NoteServices init(NoteServicesReq objReq) throws Exception {
+        Profile userInfo = this.getLoggedUser();
+        if (userInfo == null)
+            throw new Exception("Bad request.");
+        NoteServices noteServices = new NoteServices();
+        Long soPhieuNhap = hdrRepo.findByNoteNumberMax(userInfo.getNhaThuoc().getMaNhaThuoc());
+        if (soPhieuNhap == null) {
+            soPhieuNhap = 1L;
+        } else {
+            soPhieuNhap += 1;
+        }
+        noteServices.setNoteNumber(soPhieuNhap);
+        noteServices.setNoteDate(new Date());
+        noteServices.setBarCode(generateBarCode());
+        return noteServices;
+    }
+
+    @Override
+    public String generateBarCode() throws Exception {
+        Profile userInfo = this.getLoggedUser();
+        if (userInfo == null)
+            throw new Exception("Bad request.");
+        var storeCode = userInfo.getNhaThuoc().getMaNhaThuoc();
+        NoteServicesReq noteServicesReq = new NoteServicesReq();
+        noteServicesReq.setStoreCode(storeCode);
+        List<NoteServices> lst = hdrRepo.searchList(noteServicesReq);
+        String temp = UUID.randomUUID().toString().replace("-", "");
+        String barcode = temp.replaceAll("[a-zA-Z]", "").substring(0, 12);
+
+        while (hdrRepo.findByBarCode(barcode, storeCode, RecordStatusContains.ACTIVE).isPresent()) {
+            temp = UUID.randomUUID().toString().replace("-", "");
+            barcode = temp.replaceAll("[a-zA-Z]", "").substring(0, 12);
+        }
+
+        // Check if storeCode contains only digits
+        try {
+            int number = Integer.parseInt(storeCode);
+            int order = lst.isEmpty() ? 1 : lst.size() + 1;
+            String storeCodeWithOrder = storeCode + order;
+
+            if (barcode.length() > storeCodeWithOrder.length()) {
+                barcode = barcode.substring(storeCodeWithOrder.length());
+                // Replace the beginning of the barcode with storeCode + sequence number
+                barcode = storeCodeWithOrder + barcode;
+            }
+        } catch (NumberFormatException e) {
+            // storeCode contains non-numeric characters, ignore the numeric check
+        }
+
+        return barcode;
     }
 
     @Override

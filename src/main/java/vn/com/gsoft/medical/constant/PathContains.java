@@ -11,6 +11,7 @@ public class PathContains {
     public static final String URL_CANCEL = "/cancel";
     public static final String URL_DELETE = "/delete";
     public static final String URL_LOCK = "/lock";
+    public static final String URL_BAR_CODE = "/bar-code";
     public static final String URL_DELETE_DATABASE = "/delete-database";
     public static final String URL_RESTORE = "/restore";
     public static final String URL_UPDATE_STATUS_MULTI = "/update/multiple";
