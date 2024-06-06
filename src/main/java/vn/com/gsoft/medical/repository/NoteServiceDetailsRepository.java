@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import vn.com.gsoft.medical.entity.NoteServiceDetails;
+import vn.com.gsoft.medical.entity.NoteServices;
 import vn.com.gsoft.medical.model.dto.NoteServiceDetailsReq;
+import vn.com.gsoft.medical.model.dto.NoteServicesReq;
 
 import java.util.List;
 
@@ -58,5 +60,21 @@ public interface NoteServiceDetailsRepository extends CrudRepository<NoteService
   )
   List<NoteServiceDetails> searchList(@Param("param") NoteServiceDetailsReq param);
 
+  @Query("SELECT c FROM NoteServiceDetails c " +
+          " JOIN NoteServices hdr on c.idNoteService = hdr.id" +
+          " JOIN Thuocs t on t.id = c.drugId" +
+          " JOIN BacSies d on d.id = hdr.idDoctor " +
+          " WHERE 1=1 "
+          + " AND (:#{#param.id} IS NULL OR c.id = :#{#param.id}) "
+          + " AND (:#{#param.recordStatusId} IS NULL OR hdr.recordStatusId = :#{#param.recordStatusId}) "
+          + " AND (:#{#param.recordStatusId} IS NULL OR c.recordStatusId = :#{#param.recordStatusId}) "
+          + " AND (:#{#param.idCus} IS NULL OR hdr.idCus = :#{#param.idCus}) "
+          + " AND (:#{#param.idTypeService} IS NULL OR t.idTypeService = :#{#param.idTypeService}) "
+          + " ORDER BY c.id desc"
+  )
+  List<NoteServiceDetails> searchListByCusId(@Param("param") NoteServicesReq param);
+
   List<NoteServiceDetails> findByIdNoteService(Long idNoteDetailService);
+
+  void deleteAllByIdNoteService(Long idNoteService);
 }

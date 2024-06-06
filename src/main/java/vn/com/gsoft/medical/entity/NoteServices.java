@@ -90,5 +90,7 @@ public class NoteServices extends BaseEntity {
     private BigDecimal retailOutPrice;
     @Transient
     private Boolean idStatus;
+    @Transient
+    private String tenThuoc;
 }
 

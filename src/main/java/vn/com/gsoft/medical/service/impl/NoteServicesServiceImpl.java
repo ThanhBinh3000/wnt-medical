@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import vn.com.gsoft.medical.constant.ETypeService;
 import vn.com.gsoft.medical.constant.RecordStatusContains;
 import vn.com.gsoft.medical.entity.*;
 import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
@@ -77,6 +78,44 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
             }
         }
         return noteServices;
+    }
+
+    @Override
+    public NoteServices create (NoteServicesReq req) throws Exception {
+        Profile userInfo = this.getLoggedUser();
+        if (userInfo == null)
+            throw new Exception("Bad request.");
+        NoteServices hdr = new NoteServices();
+        BeanUtils.copyProperties(req, hdr, "id");
+        if(req.getRecordStatusId() == null){
+            hdr.setRecordStatusId(RecordStatusContains.ACTIVE);
+        }
+        hdr.setCreatedByUserId(userInfo.getId());
+        hdr.setCreated(new Date());
+        hdr.setIsModified(true);
+        hdr.setPaymentScore(BigDecimal.ZERO);
+        hdr.setPaymentScoreAmount(BigDecimal.ZERO);
+        hdr.setPerformerId(0L);
+        hdr.setPreScore(BigDecimal.ZERO);
+        hdr.setScore(BigDecimal.ZERO);
+        hdr.setTotalMoney(BigDecimal.ZERO);
+        NoteServices save = hdrRepo.save(hdr);
+        List<NoteServiceDetails> noteServiceDetails = saveDetail(req, hdr.getId());
+        save.setChiTiets(noteServiceDetails);
+        return save;
+    }
+
+    private List<NoteServiceDetails> saveDetail(NoteServicesReq req, Long idHdr){
+        noteServiceDetailsRepository.deleteAllByIdNoteService(idHdr);
+        List<NoteServiceDetails> list = req.getChiTiets();
+        list.forEach(item -> {
+            item.setIdNoteService(idHdr);
+            item.setIdNoteDetail(0);
+            item.setIdStatus(false);
+            item.setLastCountNumbers(0);
+            item.setRecordStatusId(RecordStatusContains.ACTIVE);
+        });
+        return (List<NoteServiceDetails>) noteServiceDetailsRepository.saveAll(list);
     }
 
     @Override
@@ -206,6 +245,28 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
         }
 
         return barcode;
+    }
+
+    @Override
+    public List<NoteServiceDetails> searchByCustomer(NoteServicesReq req) throws Exception {
+        Profile userInfo = this.getLoggedUser();
+        if (userInfo == null)
+            throw new Exception("Bad request.");
+
+        req.setRecordStatusId(RecordStatusContains.ACTIVE);
+        req.setIdTypeService(ETypeService.ServiceTherapy);
+        List<NoteServiceDetails> noteServices = noteServiceDetailsRepository.searchListByCusId(req);
+        noteServices.forEach(item -> {
+            Optional<NoteServices> hdrOpt = hdrRepo.findById(item.getIdNoteService());
+            NoteServices note = hdrOpt.get();
+            int i = item.getCountNumbers() * item.getAmount().intValue() - item.getLastCountNumbers();
+            item.setCountNumbers(i);
+            Optional<Thuocs> byId = thuocsRepository.findById(item.getDrugId());
+            byId.ifPresent(thuocs -> item.setTenThuoc(thuocs.getTenThuoc()));
+            Optional<BacSies> byId1 = bacSiesRepository.findById(note.getIdDoctor());
+            byId1.ifPresent(item::setBacSies);
+        });
+        return noteServices;
     }
 
     @Override

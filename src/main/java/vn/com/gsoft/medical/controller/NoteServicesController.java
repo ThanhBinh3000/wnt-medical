@@ -113,4 +113,10 @@ public class NoteServicesController {
   public ResponseEntity<BaseResponse> restore(@Valid @RequestBody NoteServicesReq idSearchReq) throws Exception {
     return ResponseEntity.ok(ResponseUtils.ok(service.restore(idSearchReq.getId())));
   }
+
+  @PostMapping(value = PathContains.URL_SEARCH_LIST+"-by-customer", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> searchByCustomer(@Valid @RequestBody NoteServicesReq req) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.searchByCustomer(req)));
+  }
 }

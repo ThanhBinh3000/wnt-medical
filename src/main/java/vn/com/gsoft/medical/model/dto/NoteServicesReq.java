@@ -2,10 +2,13 @@ package vn.com.gsoft.medical.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import vn.com.gsoft.medical.entity.NoteServiceDetails;
 import vn.com.gsoft.medical.model.system.BaseRequest;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class NoteServicesReq extends BaseRequest {
@@ -33,5 +36,9 @@ public class NoteServicesReq extends BaseRequest {
     private Long maNhomKhachHang;
     private Boolean idStatus;
     private Long idClinic;
+    private Long idTypeService;
+
+    private List<NoteServiceDetails> chiTiets = new ArrayList<>();
+
 }
 

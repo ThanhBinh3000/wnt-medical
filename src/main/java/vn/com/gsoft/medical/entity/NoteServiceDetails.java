@@ -15,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "NoteServiceDetails")
-public class NoteServiceDetails{
+public class NoteServiceDetails {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -24,7 +24,7 @@ public class NoteServiceDetails{
     @Column(name = "IdNoteService")
     private Long idNoteService;
     @Column(name = "DrugId")
-    private Integer drugId;
+    private Long drugId;
     @Column(name = "Amount")
     private BigDecimal amount;
     @Column(name = "RetailOutPrice")
@@ -39,6 +39,8 @@ public class NoteServiceDetails{
     private Integer updatedById;
     @Column(name = "UpdatedDate")
     private Date updatedDate;
+    @Column(name="RecordStatusId")
+    private Long recordStatusId;
     @Column(name = "IsModified")
     private Boolean isModified;
     @Column(name = "ImplementationRoomCode")
@@ -61,5 +63,10 @@ public class NoteServiceDetails{
     private String resultImage1;
     @Column(name = "ResultImage2")
     private String resultImage2;
+
+    @Transient
+    private String tenThuoc;
+    @Transient
+    private BacSies bacSies;
 }
 

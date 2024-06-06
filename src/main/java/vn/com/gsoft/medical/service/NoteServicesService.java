@@ -1,8 +1,11 @@
 package vn.com.gsoft.medical.service;
 
 
+import vn.com.gsoft.medical.entity.NoteServiceDetails;
 import vn.com.gsoft.medical.entity.NoteServices;
 import vn.com.gsoft.medical.model.dto.NoteServicesReq;
+
+import java.util.List;
 
 public interface NoteServicesService extends BaseService<NoteServices, NoteServicesReq, Long> {
 
@@ -12,4 +15,6 @@ public interface NoteServicesService extends BaseService<NoteServices, NoteServi
 
     NoteServices init (NoteServicesReq objReq) throws Exception;
     String generateBarCode () throws Exception;
+
+    List<NoteServiceDetails> searchByCustomer(NoteServicesReq req) throws Exception;
 }
