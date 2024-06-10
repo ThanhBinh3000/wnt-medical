@@ -35,13 +35,19 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
     private BacSiesRepository bacSiesRepository;
     private ESDiagnoseRepository diagnoseRepository;
     private BenhBoYTeRepository benhBoYTeRepository;
+    private SampleNoteDetailRepository sampleNoteDetailRepository;
+    private DonViTinhsRepository donViTinhsRepository;
+    private ThuocsRepository thuocsRepository;
 
     @Autowired
     public NoteMedicalsServiceImpl(NoteMedicalsRepository hdrRepo, UserProfileRepository userProfileRepository,
                                    KhachHangsRepository khachHangsRepository,
                                    ESDiagnoseRepository diagnoseRepository,
                                    BacSiesRepository bacSiesRepository,
-                                   BenhBoYTeRepository benhBoYTeRepository) {
+                                   BenhBoYTeRepository benhBoYTeRepository,
+                                   SampleNoteDetailRepository sampleNoteDetailRepository,
+                                   DonViTinhsRepository donViTinhsRepository,
+                                   ThuocsRepository thuocsRepository) {
         super(hdrRepo);
         this.hdrRepo = hdrRepo;
         this.userProfileRepository = userProfileRepository;
@@ -49,6 +55,9 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
         this.bacSiesRepository = bacSiesRepository;
         this.diagnoseRepository = diagnoseRepository;
         this.benhBoYTeRepository = benhBoYTeRepository;
+        this.sampleNoteDetailRepository = sampleNoteDetailRepository;
+        this.donViTinhsRepository = donViTinhsRepository;
+        this.thuocsRepository = thuocsRepository;
     }
 
     @Override
@@ -159,6 +168,7 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
             }
         }
         NoteMedicals noteMedicals = optional.get();
+        noteMedicals.setLichSuKeDons(sampleNoteDetailRepository.findByPatientId(noteMedicals.getIdPatient()));
         if (noteMedicals.getCreatedByUserId() != null && noteMedicals.getCreatedByUserId() > 0) {
             Optional<UserProfile> userProfile = userProfileRepository.findById(noteMedicals.getCreatedByUserId());
             userProfile.ifPresent(profile -> noteMedicals.setCreatedByUseText(profile.getTenDayDu()));
@@ -180,7 +190,42 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
             List<BenhBoYTe> benhBoYTes = benhBoYTeRepository.findByIdIn(ids);
             noteMedicals.setDiagnostics(benhBoYTes);
         }
+        for (SampleNoteDetail ct : noteMedicals.getLichSuKeDons()) {
+            if (ct.getDrugUnitID() != null && ct.getDrugUnitID() > 0) {
+                Optional<DonViTinhs> donViTinhs = donViTinhsRepository.findById(ct.getDrugUnitID());
+                if (donViTinhs.isPresent()) {
+                    ct.setDrugUnitText(donViTinhs.get().getTenDonViTinh());
+                }
 
+            }
+            if (ct.getDrugID() != null && ct.getDrugID() > 0) {
+                Optional<Thuocs> thuocsOpt = thuocsRepository.findById(ct.getDrugID());
+                if (thuocsOpt.isPresent()) {
+                    ct.setDrugCodeText(thuocsOpt.get().getMaThuoc());
+                    ct.setDrugNameText(thuocsOpt.get().getTenThuoc());
+                    Thuocs thuocs = thuocsOpt.get();
+                    List<DonViTinhs> dviTinh = new ArrayList<>();
+                    if (thuocs.getDonViXuatLeMaDonViTinh() > 0) {
+                        Optional<DonViTinhs> byId = donViTinhsRepository.findById(thuocs.getDonViXuatLeMaDonViTinh());
+                        if (byId.isPresent()) {
+                            byId.get().setFactor(1);
+                            dviTinh.add(byId.get());
+                            thuocs.setTenDonViTinhXuatLe(byId.get().getTenDonViTinh());
+                        }
+                    }
+                    if (thuocs.getDonViThuNguyenMaDonViTinh() > 0 && !thuocs.getDonViThuNguyenMaDonViTinh().equals(thuocs.getDonViXuatLeMaDonViTinh())) {
+                        Optional<DonViTinhs> byId = donViTinhsRepository.findById(thuocs.getDonViThuNguyenMaDonViTinh());
+                        if (byId.isPresent()) {
+                            byId.get().setFactor(thuocs.getHeSo());
+                            dviTinh.add(byId.get());
+                            thuocs.setTenDonViTinhThuNguyen(byId.get().getTenDonViTinh());
+                        }
+                    }
+                    thuocs.setListDonViTinhs(dviTinh);
+                    ct.setThuocs(thuocs);
+                }
+            }
+        }
         return noteMedicals;
     }
 
