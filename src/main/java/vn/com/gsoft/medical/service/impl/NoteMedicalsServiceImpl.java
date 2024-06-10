@@ -122,7 +122,7 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
                 throw new Exception("Không tìm thấy dữ liệu.");
             }
         }
-        optional.get().setIsLock(true);
+        optional.get().setIsLock(objReq.getIsLock());
         NoteMedicals save = hdrRepo.save(optional.get());
         return save;
     }
