@@ -57,6 +57,17 @@ public class NoteMedicalsController {
         return ResponseEntity.ok(ResponseUtils.ok(service.update(objReq)));
     }
 
+    @PostMapping(value = PathContains.URL_LOCK, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<BaseResponse> lock(@Valid @RequestBody NoteMedicalsReq objReq) throws Exception {
+        return ResponseEntity.ok(ResponseUtils.ok(service.lock(objReq)));
+    }
+
+    @PostMapping(value = PathContains.URL_INIT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<BaseResponse> init(@Valid @RequestBody NoteMedicalsReq objReq) throws Exception {
+        return ResponseEntity.ok(ResponseUtils.ok(service.init(objReq)));
+    }
 
     @GetMapping(value = PathContains.URL_DETAIL, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)

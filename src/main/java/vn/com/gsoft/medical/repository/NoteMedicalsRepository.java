@@ -132,4 +132,7 @@ public interface NoteMedicalsRepository extends BaseRepository<NoteMedicals, Not
   )
   List<NoteMedicals> searchList(@Param("param") NoteMedicalsReq param);
 
+  @Query("SELECT MAX(px.noteNumber) FROM NoteMedicals px where px.storeCode = ?1  ")
+  Long findByNoteNumberMax(String nhaThuocMaNhaThuoc);
+
 }

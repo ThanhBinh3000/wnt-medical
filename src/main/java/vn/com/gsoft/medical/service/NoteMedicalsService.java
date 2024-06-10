@@ -12,6 +12,9 @@ public interface NoteMedicalsService extends BaseService<NoteMedicals, NoteMedic
 
     Object searchPagePhieuKham(NoteMedicalsReq objReq);
 
+    NoteMedicals lock(NoteMedicalsReq objReq) throws Exception;
+    NoteMedicals init(NoteMedicalsReq objReq) throws Exception;
+
     @Transactional
     NoteMedicals cancel(Long id) throws Exception;
 

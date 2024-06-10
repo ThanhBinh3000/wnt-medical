@@ -22,7 +22,7 @@ public class NoteMedicals extends BaseEntity {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     @Column(name = "NoteNumber")
-    private Integer noteNumber;
+    private Long noteNumber;
     @Column(name = "IdPatient")
     private Long idPatient;
     @Column(name = "IdDoctor")
