@@ -190,7 +190,7 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
                 throw new Exception("Không tìm thấy dữ liệu.");
             }
         }
-        optional.get().setIsLock(true);
+        optional.get().setIsLock(objReq.getIsLock());
         hdrRepo.save(optional.get());
     }
 
