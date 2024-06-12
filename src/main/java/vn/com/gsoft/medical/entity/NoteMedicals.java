@@ -70,7 +70,7 @@ public class NoteMedicals extends BaseEntity {
     @Column(name = "ReasonExamination")
     private String reasonExamination;
     @Column(name = "IdServiceExam")
-    private Integer idServiceExam;
+    private Long idServiceExam;
     @Column(name = "IdDiagnostic")
     private Integer idDiagnostic;
     @Column(name = "TestResults")

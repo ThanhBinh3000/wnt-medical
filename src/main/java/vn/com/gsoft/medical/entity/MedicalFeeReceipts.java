@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -18,6 +19,7 @@ import java.util.Date;
 public class MedicalFeeReceipts extends BaseEntity{
     @Id
     @Column(name = "Id")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     @Column(name = "NoteDate")
     private Date noteDate;
@@ -42,5 +44,7 @@ public class MedicalFeeReceipts extends BaseEntity{
 
     @Transient
     private String customerName;
+    @Transient
+    private List<MedicalFeeReceiptDetails> chiTiets;
 }
 

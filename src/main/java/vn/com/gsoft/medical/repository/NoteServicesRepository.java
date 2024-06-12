@@ -126,6 +126,7 @@ public interface NoteServicesRepository extends BaseRepository<NoteServices, Not
   )
   List<NoteServices> searchList(@Param("param") NoteServicesReq param);
 
+  List<NoteServices> findByStoreCodeAndRecordStatusIdAndIsDeb(String storeCode, Long recordStatusId, Boolean isDeb);
 
   @Query("SELECT t FROM NoteServices t WHERE t.barCode = :barCode AND t.storeCode = :maNhaThuoc  AND t.recordStatusId = :recordStatusId")
   Optional<NoteServices> findByBarCode(String barCode, String maNhaThuoc, Long recordStatusId);

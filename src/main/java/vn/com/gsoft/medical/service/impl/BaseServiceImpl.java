@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import vn.com.gsoft.medical.constant.RecordStatusContains;
 import vn.com.gsoft.medical.entity.BaseEntity;
+import vn.com.gsoft.medical.model.system.ApplicationSetting;
 import vn.com.gsoft.medical.model.system.BaseRequest;
 import vn.com.gsoft.medical.model.system.Profile;
 import vn.com.gsoft.medical.repository.BaseRepository;
@@ -35,6 +36,14 @@ public class BaseServiceImpl<E extends BaseEntity,R extends BaseRequest, PK exte
             throw new Exception("Token invalid!");
         }
     }
+
+    public ApplicationSetting getSetting(String key) throws Exception {
+        return getLoggedUser().getApplicationSettings().stream()
+                .filter(setting -> setting.getSettingKey().equals(key))
+                .findFirst()
+                .orElse(null);
+    }
+
     @Override
     public Page<E> searchPage(R req) throws Exception {
         Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
