@@ -47,4 +47,5 @@ public interface MedicalFeeReceiptsRepository extends BaseRepository<MedicalFeeR
   )
   List<MedicalFeeReceipts> searchList(@Param("param") MedicalFeeReceiptsReq param);
 
+  List<MedicalFeeReceipts> findByStoreCode(String storeCode);
 }

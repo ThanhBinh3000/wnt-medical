@@ -81,4 +81,16 @@ public class MedicalFeeReceiptsController {
   public ResponseEntity<BaseResponse> restore(@Valid @RequestBody MedicalFeeReceiptsReq idSearchReq) throws Exception {
     return ResponseEntity.ok(ResponseUtils.ok(service.restore(idSearchReq.getId())));
   }
+
+  @GetMapping(value = "get-new-note-number", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> getNewNoteNumber() throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.getNewNoteNumber()));
+  }
+
+  @PostMapping(value = "get-list-customer-debt", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> getListCustomerDebt(@Valid @RequestBody MedicalFeeReceiptsReq objReq) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.getListCustomerDebt(objReq.getIdCus(), objReq.getIsDisplayByNote())));
+  }
 }

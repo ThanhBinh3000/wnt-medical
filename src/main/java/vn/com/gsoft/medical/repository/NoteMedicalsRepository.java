@@ -1,5 +1,6 @@
 package vn.com.gsoft.medical.repository;
 
+import org.aspectj.weaver.ast.Not;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import vn.com.gsoft.medical.entity.NoteMedicals;
 import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
 
+import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -131,6 +134,8 @@ public interface NoteMedicalsRepository extends BaseRepository<NoteMedicals, Not
           + " ORDER BY c.id desc"
   )
   List<NoteMedicals> searchList(@Param("param") NoteMedicalsReq param);
+
+  List<NoteMedicals> findByStoreCodeAndRecordStatusIdAndIsDebAndStatusNoteInAndTotalMoneyIsGreaterThan(String storeCode, Long recordStatusId, Boolean isDeb, Collection<Integer> statusNote, BigDecimal totalMoney);
 
   @Query("SELECT MAX(px.noteNumber) FROM NoteMedicals px where px.storeCode = ?1  ")
   Long findByNoteNumberMax(String nhaThuocMaNhaThuoc);
