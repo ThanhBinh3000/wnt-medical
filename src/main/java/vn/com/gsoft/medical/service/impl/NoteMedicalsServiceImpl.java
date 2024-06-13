@@ -154,6 +154,25 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
     }
 
     @Override
+    public NoteMedicals changeStatusExam(NoteMedicalsReq objReq) throws Exception {
+        Profile userInfo = this.getLoggedUser();
+        if (userInfo == null)
+            throw new Exception("Bad request.");
+
+        Optional<NoteMedicals> optional = hdrRepo.findById(objReq.getId());
+        if (optional.isEmpty()) {
+            throw new Exception("Không tìm thấy dữ liệu.");
+        } else {
+            if (optional.get().getRecordStatusId() != RecordStatusContains.ACTIVE) {
+                throw new Exception("Không tìm thấy dữ liệu.");
+            }
+        }
+        optional.get().setStatusNote(objReq.getStatusNote());
+        NoteMedicals save = hdrRepo.save(optional.get());
+        return save;
+    }
+
+    @Override
     public NoteMedicals detail(Long id) throws Exception {
         Profile userInfo = this.getLoggedUser();
         if (userInfo == null)
