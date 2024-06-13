@@ -124,4 +124,10 @@ public class NoteMedicalsController {
     public ResponseEntity<BaseResponse> updateNoteWait(@Valid @RequestBody NoteMedicalsReq objReq) throws Exception {
         return ResponseEntity.ok(ResponseUtils.ok(service.updateNoteWait(objReq)));
     }
+
+    @PostMapping(value = PathContains.URL_CHANGESTATUS, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<BaseResponse> changeStatusExam(@Valid @RequestBody NoteMedicalsReq objReq) throws Exception {
+        return ResponseEntity.ok(ResponseUtils.ok(service.changeStatusExam(objReq)));
+    }
 }

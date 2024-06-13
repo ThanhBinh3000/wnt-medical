@@ -14,6 +14,7 @@ public interface NoteMedicalsService extends BaseService<NoteMedicals, NoteMedic
 
     NoteMedicals lock(NoteMedicalsReq objReq) throws Exception;
     NoteMedicals init(NoteMedicalsReq objReq) throws Exception;
+    NoteMedicals changeStatusExam(NoteMedicalsReq objReq) throws Exception;
 
     @Transactional
     NoteMedicals cancel(Long id) throws Exception;
