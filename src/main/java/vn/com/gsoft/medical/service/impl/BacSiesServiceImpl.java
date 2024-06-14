@@ -1,12 +1,15 @@
 package vn.com.gsoft.medical.service.impl;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import vn.com.gsoft.medical.constant.RecordStatusContains;
 import vn.com.gsoft.medical.entity.BacSies;
 import vn.com.gsoft.medical.entity.NhomBacSies;
@@ -16,8 +19,12 @@ import vn.com.gsoft.medical.repository.BacSiesRepository;
 import vn.com.gsoft.medical.repository.NhomBacSiesRepository;
 import vn.com.gsoft.medical.service.BacSiesService;
 
-import java.util.Date;
-import java.util.Optional;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.function.Supplier;
 
 
 @Service
@@ -98,4 +105,39 @@ public class BacSiesServiceImpl extends BaseServiceImpl<BacSies, BacSiesReq,Long
 
 		return hdrRepo.save(hdr);
 	}
+
+	@Override
+	public boolean importExcel(MultipartFile file) throws Exception {
+		Profile userInfo = this.getLoggedUser();
+		if (userInfo == null)
+			throw new Exception("Bad request.");
+		Supplier<BacSies> bacSiesSupplier = BacSies::new;
+		BaseServiceImpl<BacSies, BacSiesReq,Long> service = new BaseServiceImpl<>(bacSiesSupplier);
+		InputStream inputStream = file.getInputStream();
+		try (Workbook workbook = new XSSFWorkbook(inputStream)) {
+			List<String> propertyNames = Arrays.asList("code", "tenBacSy", "diaChi", "dienThoai"
+					, "email", "maNhaThuoc");
+			List<BacSies> bacSies = new ArrayList<>(service.handleImportExcel(workbook, propertyNames));
+			bacSies.forEach(item -> {
+				item.setActive(true);
+				item.setMaNhaThuoc(userInfo.getNhaThuoc().getMaNhaThuoc());
+				item.setStoreId(0L);
+				item.setMasterId(0);
+				item.setMetadataHash(0);
+				item.setPreMetadataHash(0);
+				item.setConnectCode("");
+				item.setConnectPassword("");
+				item.setIsConnectivity(true);
+				item.setResultConnect("");
+				item.setMaNhomBacSy(0L);
+				item.setRecordStatusId(0L);
+			});
+			hdrRepo.saveAll(bacSies);
+			return true;
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 }
