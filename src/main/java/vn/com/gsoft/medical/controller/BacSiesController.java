@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import vn.com.gsoft.medical.constant.PathContains;
 import vn.com.gsoft.medical.model.dto.BacSiesReq;
 import vn.com.gsoft.medical.model.system.BaseResponse;
@@ -63,5 +64,11 @@ public class BacSiesController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<BaseResponse> delete(@Valid @RequestBody BacSiesReq idSearchReq) throws Exception {
     return ResponseEntity.ok(ResponseUtils.ok(service.delete(idSearchReq.getId())));
+  }
+
+  @PostMapping(value = PathContains.URL_IMPORT, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> importExcel(@RequestParam("file") MultipartFile file) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.importExcel(file)));
   }
 }
