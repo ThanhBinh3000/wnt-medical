@@ -273,7 +273,8 @@ public class MedicalFeeReceiptsServiceImpl extends BaseServiceImpl<MedicalFeeRec
                 List<MedicalFeeReceiptsCustomerDebtRes> subItems = entry.getValue();
                 BigDecimal thanhTienGroup = subItems.stream().map(MedicalFeeReceiptsCustomerDebtRes::getThanhTien).reduce(BigDecimal.ZERO, BigDecimal::add);
                 for(int i = 0; i < subItems.size(); i++) {
-                    MedicalFeeReceiptsCustomerDebtRes item = subItems.get(i);
+                    MedicalFeeReceiptsCustomerDebtRes item = new MedicalFeeReceiptsCustomerDebtRes();
+                    BeanUtils.copyProperties(subItems.get(i), item);
                     // Set thành tiền phiếu và danh sách chi tiết cho item đầu tiên của phiếu
                     if (i == 0) {
                         item.setIsFirstItem(true);
@@ -301,7 +302,8 @@ public class MedicalFeeReceiptsServiceImpl extends BaseServiceImpl<MedicalFeeRec
                 List<MedicalFeeReceiptsCustomerDebtRes> subItems = entry.getValue();
                 BigDecimal thanhTienGroup = subItems.stream().map(MedicalFeeReceiptsCustomerDebtRes::getThanhTien).reduce(BigDecimal.ZERO, BigDecimal::add);
                 for(int i = 0; i < subItems.size(); i++) {
-                    MedicalFeeReceiptsCustomerDebtRes item = subItems.get(i);
+                    MedicalFeeReceiptsCustomerDebtRes item = new MedicalFeeReceiptsCustomerDebtRes();
+                    BeanUtils.copyProperties(subItems.get(i), item);
                     // Set thành tiền khách hàng và danh sách chi tiết cho item đầu tiên của khách hàng
                     if (i == 0) {
                         item.setIsFirstItem(true);
