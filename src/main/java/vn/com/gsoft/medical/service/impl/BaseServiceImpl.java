@@ -20,6 +20,7 @@ import vn.com.gsoft.medical.service.BaseService;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -192,7 +193,22 @@ public class BaseServiceImpl<E extends BaseEntity,R extends BaseRequest, PK exte
         try {
             Field field = obj.getClass().getDeclaredField(propertyName);
             field.setAccessible(true);
-            field.set(obj, value);
+            Class<?> fieldType = field.getType();
+
+            // Convert value based on field type
+            if (fieldType == int.class || fieldType == Integer.class) {
+                field.set(obj, Integer.parseInt(value.toString()));
+            } else if (fieldType == float.class || fieldType == Float.class) {
+                field.set(obj, Float.parseFloat(value.toString()));
+            } else if (fieldType == double.class || fieldType == Double.class) {
+                field.set(obj, Double.parseDouble(value.toString()));
+            } else if (fieldType == long.class || fieldType == Long.class) {
+                field.set(obj, Long.parseLong(value.toString()));
+            } else if (fieldType == BigDecimal.class) {
+                field.set(obj, new BigDecimal(value.toString()));
+            } else {
+                field.set(obj, value); // Default case, for other types
+            }
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -243,9 +259,6 @@ public class BaseServiceImpl<E extends BaseEntity,R extends BaseRequest, PK exte
                 continue;
             }
             E data = supplier.get();
-//            Object data = new Object();
-//			List<String> propertyNames = Arrays.asList("code", "tenBacSy", "diaChi", "dienThoai"
-//					, "email", "maNhaThuoc");
             for (int i = 0; i < propertyNames.size(); i++) {
                 Cell dataCell = currentRow.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                 String cellValue = getCellValueAsString(dataCell);
