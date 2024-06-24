@@ -16,6 +16,7 @@ import vn.com.gsoft.medical.constant.ImportConstant;
 import vn.com.gsoft.medical.constant.RecordStatusContains;
 import vn.com.gsoft.medical.entity.BacSies;
 import vn.com.gsoft.medical.entity.NhomBacSies;
+import vn.com.gsoft.medical.entity.Process;
 import vn.com.gsoft.medical.model.dto.BacSiesReq;
 import vn.com.gsoft.medical.model.system.Profile;
 import vn.com.gsoft.medical.model.system.WrapData;
@@ -24,13 +25,8 @@ import vn.com.gsoft.medical.repository.NhomBacSiesRepository;
 import vn.com.gsoft.medical.service.BacSiesService;
 import vn.com.gsoft.medical.service.KafkaProducer;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 
 
@@ -122,7 +118,7 @@ public class BacSiesServiceImpl extends BaseServiceImpl<BacSies, BacSiesReq, Lon
     }
 
     @Override
-    public boolean importExcel(MultipartFile file) throws Exception {
+    public Process importExcel(MultipartFile file) throws Exception {
         Profile userInfo = this.getLoggedUser();
         if (userInfo == null)
             throw new Exception("Bad request.");
@@ -147,29 +143,33 @@ public class BacSiesServiceImpl extends BaseServiceImpl<BacSies, BacSiesReq, Lon
                 item.setMaNhomBacSy(0L);
                 item.setRecordStatusId(0L);
             });
-			pushToKafka(bacSies);
-            return true;
+            return pushToKafka(bacSies);
         } catch (Exception e) {
+            log.error(e.getMessage());
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
-    private void pushToKafka(List<BacSies> bacSies) throws ExecutionException, InterruptedException, TimeoutException {
+    private Process pushToKafka(List<BacSies> bacSies) throws Exception {
         int size = bacSies.size();
         int index = 1;
         UUID uuid = UUID.randomUUID();
-        String bathKey = uuid.toString();
+        String batchKey = uuid.toString();
+        Profile userInfo = this.getLoggedUser();
+        Process process = kafkaProducer.createProcess(batchKey, userInfo.getNhaThuoc().getMaNhaThuoc(), new Gson().toJson(bacSies), new Date(),size);
         for(BacSies bs :bacSies){
 			String key = bs.getMaNhaThuoc();
-			WrapData data = new WrapData();
-            data.setBathKey(bathKey);
+			WrapData<BacSies> data = new WrapData<>();
+            data.setBatchKey(batchKey);
 			data.setCode(ImportConstant.BAC_SI);
 			data.setSendDate(new Date());
 			data.setData(bs);
             data.setTotal(size);
             data.setIndex(index++);
+            kafkaProducer.createProcessDtl(process, data);
 			kafkaProducer.sendInternal(topicName, key, new Gson().toJson(data));
 		}
+        return process;
     }
 }
