@@ -30,5 +30,6 @@ public class Process {
     private Integer status; // 0: khởi tạo, 1: running , 2:done
     private Integer returnCode; // 0: Thành công, 1:Chạy thành công có lỗi 1 phần, 2: Chạy không thành công
     private String message;
+    private Long createBy;
 }
 

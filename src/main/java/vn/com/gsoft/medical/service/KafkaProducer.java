@@ -14,7 +14,7 @@ public interface KafkaProducer {
 
     SendResult<String, String> sendInternal(String topic, String key, String payload) throws InterruptedException, ExecutionException, TimeoutException;
 
-    Process createProcess(String batchKey, String maNhaThuoc, String json, Date date, int size) throws Exception;
+    Process createProcess(String batchKey, String maNhaThuoc, String json, Date date, int size, Long userId) throws Exception;
 
     ProcessDtl createProcessDtl(Process process, WrapData data);
 }

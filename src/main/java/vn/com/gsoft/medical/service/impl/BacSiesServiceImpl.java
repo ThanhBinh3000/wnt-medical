@@ -157,7 +157,7 @@ public class BacSiesServiceImpl extends BaseServiceImpl<BacSies, BacSiesReq, Lon
         UUID uuid = UUID.randomUUID();
         String batchKey = uuid.toString();
         Profile userInfo = this.getLoggedUser();
-        Process process = kafkaProducer.createProcess(batchKey, userInfo.getNhaThuoc().getMaNhaThuoc(), new Gson().toJson(bacSies), new Date(),size);
+        Process process = kafkaProducer.createProcess(batchKey, userInfo.getNhaThuoc().getMaNhaThuoc(), new Gson().toJson(bacSies), new Date(),size, userInfo.getId());
         for(BacSies bs :bacSies){
 			String key = bs.getMaNhaThuoc();
 			WrapData<BacSies> data = new WrapData<>();

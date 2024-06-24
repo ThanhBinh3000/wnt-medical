@@ -66,7 +66,7 @@ public class KafkaProducerImpl implements KafkaProducer {
     }
 
     @Override
-    public Process createProcess(String batchKey, String maNhaThuoc, String json, Date date, int size) throws Exception {
+    public Process createProcess(String batchKey, String maNhaThuoc, String json, Date date, int size, Long userId) throws Exception {
         // check batchKey
         Optional<Process> checkOpt = processRepository.findByBatchKey(batchKey);
         if (checkOpt.isPresent()) {
@@ -78,6 +78,7 @@ public class KafkaProducerImpl implements KafkaProducer {
         process.setStartDate(date);
         process.setTotal(size);
         process.setStatus(0);
+        process.setCreateBy(userId);
         return processRepository.save(process);
     }
 
