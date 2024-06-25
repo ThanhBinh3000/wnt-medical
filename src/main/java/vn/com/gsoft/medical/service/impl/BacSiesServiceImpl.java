@@ -123,12 +123,11 @@ public class BacSiesServiceImpl extends BaseServiceImpl<BacSies, BacSiesReq, Lon
         if (userInfo == null)
             throw new Exception("Bad request.");
         Supplier<BacSies> bacSiesSupplier = BacSies::new;
-        BaseServiceImpl<BacSies, BacSiesReq, Long> service = new BaseServiceImpl<>(bacSiesSupplier);
         InputStream inputStream = file.getInputStream();
         try (Workbook workbook = new XSSFWorkbook(inputStream)) {
             List<String> propertyNames = Arrays.asList("code", "tenBacSy", "diaChi", "dienThoai"
                     , "email", "maNhaThuoc");
-            List<BacSies> bacSies = new ArrayList<>(service.handleImportExcel(workbook, propertyNames));
+            List<BacSies> bacSies = new ArrayList<>(handleImportExcel(workbook, propertyNames,bacSiesSupplier));
             bacSies.forEach(item -> {
                 item.setActive(true);
                 item.setMaNhaThuoc(userInfo.getNhaThuoc().getMaNhaThuoc());

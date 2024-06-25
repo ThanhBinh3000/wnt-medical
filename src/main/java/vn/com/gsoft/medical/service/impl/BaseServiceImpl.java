@@ -27,11 +27,6 @@ import java.util.function.Supplier;
 @Slf4j
 public class BaseServiceImpl<E extends BaseEntity,R extends BaseRequest, PK extends Serializable> implements BaseService<E,R, PK> {
     private BaseRepository repository;
-    private Supplier<E> supplier;
-
-    public BaseServiceImpl(Supplier<E> supplier) {
-        this.supplier = supplier;
-    }
 
     public BaseServiceImpl(BaseRepository repository) {
         this.repository = repository;
@@ -244,8 +239,8 @@ public class BaseServiceImpl<E extends BaseEntity,R extends BaseRequest, PK exte
         }
         return true;
     }
-
-    public List<E> handleImportExcel(Workbook workbook, List<String> propertyNames) throws Exception {
+    @Override
+    public List<E> handleImportExcel(Workbook workbook, List<String> propertyNames, Supplier<E> supplier) throws Exception {
         List<E> list = new ArrayList<>();
         Sheet sheet = workbook.getSheetAt(0);
         Iterator<Row> iterator = sheet.iterator();
