@@ -240,8 +240,8 @@ public class BaseServiceImpl<E extends BaseEntity,R extends BaseRequest, PK exte
         return true;
     }
     @Override
-    public List<E> handleImportExcel(Workbook workbook, List<String> propertyNames, Supplier<E> supplier) throws Exception {
-        List<E> list = new ArrayList<>();
+    public <T> List<T> handleImportExcel(Workbook workbook, List<String> propertyNames, Supplier<T> supplier) throws Exception {
+        List<T> list = new ArrayList<>();
         Sheet sheet = workbook.getSheetAt(0);
         Iterator<Row> iterator = sheet.iterator();
         for (int i = 0; i < 1 && iterator.hasNext(); i++) {
@@ -253,7 +253,7 @@ public class BaseServiceImpl<E extends BaseEntity,R extends BaseRequest, PK exte
             if (isRowEmpty(currentRow)) {
                 continue;
             }
-            E data = supplier.get();
+            T data = supplier.get();
             for (int i = 0; i < propertyNames.size(); i++) {
                 Cell dataCell = currentRow.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                 String cellValue = getCellValueAsString(dataCell);

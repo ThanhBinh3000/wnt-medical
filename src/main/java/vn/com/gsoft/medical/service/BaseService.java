@@ -31,5 +31,5 @@ public interface BaseService<E,R, PK extends Serializable> {
     boolean deleteForever(PK id) throws Exception;
     @Transactional(rollbackFor = {Exception.class, Throwable.class})
     boolean updateMultiple(R req) throws Exception;
-    List<E> handleImportExcel(Workbook workbook, List<String> propertyNames, Supplier<E> supplier) throws Exception;
+    <T> List<T> handleImportExcel(Workbook workbook, List<String> propertyNames, Supplier<T> supplier) throws Exception;
 }
