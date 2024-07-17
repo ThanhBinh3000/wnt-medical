@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.com.gsoft.medical.constant.PathContains;
 import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
-import vn.com.gsoft.medical.model.dto.NoteServicesReq;
 import vn.com.gsoft.medical.model.system.BaseResponse;
 import vn.com.gsoft.medical.service.NoteMedicalsService;
 import vn.com.gsoft.medical.util.system.ResponseUtils;
@@ -152,5 +151,11 @@ public class NoteMedicalsController {
             mapper.writeValue(response.getOutputStream(), body);
 
         }
+    }
+
+    @PostMapping(value = PathContains.URL_PREVIEW, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<BaseResponse> preview(@RequestBody HashMap<String, Object> body) throws Exception {
+        return ResponseEntity.ok(ResponseUtils.ok(service.preview(body)));
     }
 }

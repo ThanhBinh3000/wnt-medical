@@ -143,4 +143,10 @@ public class NoteServicesController {
 
     }
   }
+
+  @PostMapping(value = PathContains.URL_PREVIEW, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> preview(@RequestBody HashMap<String, Object> body) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.preview(body)));
+  }
 }

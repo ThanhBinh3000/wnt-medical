@@ -13,6 +13,8 @@ import vn.com.gsoft.medical.model.system.BaseResponse;
 import vn.com.gsoft.medical.service.MedicalFeeReceiptsService;
 import vn.com.gsoft.medical.util.system.ResponseUtils;
 
+import java.util.HashMap;
+
 
 @Slf4j
 @RestController
@@ -92,5 +94,11 @@ public class MedicalFeeReceiptsController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<BaseResponse> getListCustomerDebt(@Valid @RequestBody MedicalFeeReceiptsReq objReq) throws Exception {
     return ResponseEntity.ok(ResponseUtils.ok(service.getListCustomerDebt(objReq.getIdCus(), objReq.getIsDisplayByNote())));
+  }
+
+  @PostMapping(value = PathContains.URL_PREVIEW, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> preview(@RequestBody HashMap<String, Object> body) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.preview(body)));
   }
 }

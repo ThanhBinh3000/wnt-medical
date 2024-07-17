@@ -50,6 +50,8 @@ public class SampleNoteDetail extends BaseEntity {
     @Transient
     private String drugUnitText;
     @Transient
+    private String groupDrugNameText;
+    @Transient
     private Thuocs thuocs;
 }
 
