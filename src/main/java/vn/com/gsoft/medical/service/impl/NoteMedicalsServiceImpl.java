@@ -1,7 +1,9 @@
 package vn.com.gsoft.medical.service.impl;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
+import org.apache.poi.sl.usermodel.Sheet;
 import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,15 +11,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import vn.com.gsoft.medical.constant.AppConstants;
 import vn.com.gsoft.medical.constant.RecordStatusContains;
 import vn.com.gsoft.medical.constant.StoreSettingKeys;
 import vn.com.gsoft.medical.entity.*;
 import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
 import vn.com.gsoft.medical.model.system.ApplicationSetting;
+import vn.com.gsoft.medical.model.system.PaggingReq;
 import vn.com.gsoft.medical.model.system.Profile;
 import vn.com.gsoft.medical.repository.*;
 import vn.com.gsoft.medical.service.NoteMedicalsService;
+import vn.com.gsoft.medical.util.system.ExportExcel;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -379,6 +388,66 @@ public class NoteMedicalsServiceImpl extends BaseServiceImpl<NoteMedicals, NoteM
         e.setModifiedByUserId(getLoggedUser().getId());
         e = hdrRepo.save(e);
         return e;
+    }
+
+    @Override
+    public void export(NoteMedicalsReq objReq, HttpServletResponse response) throws Exception {
+        Profile userInfo = this.getLoggedUser();
+        if (userInfo == null)
+            throw new Exception("Bad request.");
+        if (userInfo.getNhaThuoc().getMaNhaThuoc().equals(AppConstants.DictionaryStoreCode) || userInfo.getNhaThuoc().getMaNhaThuocCha().equals(AppConstants.DictionaryStoreCode))
+            throw new Exception("Bạn không được phép xuất dữ liệu của cơ sở này.");
+        PaggingReq paggingReq = new PaggingReq();
+        paggingReq.setPage(0);
+        paggingReq.setLimit(Integer.MAX_VALUE);
+        objReq.setPaggingReq(paggingReq);
+        Page<NoteMedicals> noteMedicals = this.searchPage(objReq);
+        List<NoteMedicals> data = noteMedicals.getContent();
+        String title = "DANH SÁCH PHIẾU KHÁM BỆNH";
+        String fileName = "danh-sach-phieu-kham-benh.xlsx";
+        String[] rowsName = new String[]{
+                "STT",
+                "Số phiếu",
+                "Ngày khám",
+                "Tên bệnh nhân",
+                "Tuổi",
+                "Địa chỉ",
+                "Bác sỹ khám",
+                "Khám lâm sàng",
+                "Chẩn đoán bệnh",
+                "Kết luận và hướng điều trị",
+                "Ngày tái khám",
+        };
+        List<Object[]> dataList = new ArrayList<Object[]>();
+        Object[] objs = null;
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        for (int i = 0; i < data.size(); i++) {
+            NoteMedicals medicals = data.get(i);
+            objs = new Object[rowsName.length];
+            objs[0] = i + 1;
+            objs[1] = medicals.getNoteNumber();
+            objs[2] = medicals.getNoteDate() != null ? dateFormat.format(medicals.getNoteDate()) : "";
+            objs[3] = medicals.getPatientName();
+            objs[4] = medicals.getCustomer().getBirthDate();
+            objs[5] = medicals.getCustomer().getDiaChi();
+            objs[6] = medicals.getDoctorName();
+            objs[7] = medicals.getClinicalExamination();
+            objs[8] = getDiagnostics(medicals.getDiagnostics());
+            objs[9] = medicals.getConclude();
+            objs[10] = medicals.getReexaminationDate() != null ? dateFormat.format(medicals.getReexaminationDate()) : "";
+            dataList.add(objs);
+        }
+        ExportExcel ex = new ExportExcel(title, fileName, rowsName, dataList, response);
+        ex.export();
+    }
+
+    private String getDiagnostics(List<BenhBoYTe> diagnostics){
+        String result = diagnostics.stream()
+                .map(BenhBoYTe::getName)
+                .collect(Collectors.joining("-"));
+        return result;
     }
 
 

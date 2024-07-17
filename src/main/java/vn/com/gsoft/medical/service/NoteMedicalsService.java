@@ -1,6 +1,7 @@
 package vn.com.gsoft.medical.service;
 
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.gsoft.medical.entity.NoteMedicals;
 import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
@@ -26,4 +27,7 @@ public interface NoteMedicalsService extends BaseService<NoteMedicals, NoteMedic
 
     @Transactional(rollbackFor = {Exception.class, Throwable.class})
     NoteMedicals updateNoteWait(NoteMedicalsReq req) throws Exception;
+
+    void export(NoteMedicalsReq req, HttpServletResponse response) throws Exception;
+
 }

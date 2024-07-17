@@ -1,6 +1,7 @@
 package vn.com.gsoft.medical.service.impl;
 
 import jakarta.persistence.Tuple;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import vn.com.gsoft.medical.constant.AppConstants;
 import vn.com.gsoft.medical.constant.ETypeService;
 import vn.com.gsoft.medical.constant.RecordStatusContains;
 import vn.com.gsoft.medical.entity.*;
@@ -15,16 +17,17 @@ import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
 import vn.com.gsoft.medical.model.dto.NoteServicesChoThucHienRes;
 import vn.com.gsoft.medical.model.dto.NoteServicesLieuTrinhRes;
 import vn.com.gsoft.medical.model.dto.NoteServicesReq;
+import vn.com.gsoft.medical.model.system.PaggingReq;
 import vn.com.gsoft.medical.model.system.Profile;
 import vn.com.gsoft.medical.repository.*;
 import vn.com.gsoft.medical.service.NoteServicesService;
 import vn.com.gsoft.medical.util.system.DataUtils;
+import vn.com.gsoft.medical.util.system.ExportExcel;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 @Service
@@ -305,5 +308,50 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
             }
         }
         return noteServices;
+    }
+
+    @Override
+    public void export(NoteServicesReq objReq, HttpServletResponse response) throws Exception {
+        Profile userInfo = this.getLoggedUser();
+        if (userInfo == null)
+            throw new Exception("Bad request.");
+        if (userInfo.getNhaThuoc().getMaNhaThuoc().equals(AppConstants.DictionaryStoreCode) || userInfo.getNhaThuoc().getMaNhaThuocCha().equals(AppConstants.DictionaryStoreCode))
+            throw new Exception("Bạn không được phép xuất dữ liệu của cơ sở này.");
+        PaggingReq paggingReq = new PaggingReq();
+        paggingReq.setPage(0);
+        paggingReq.setLimit(Integer.MAX_VALUE);
+        objReq.setPaggingReq(paggingReq);
+        Page<NoteServices> noteMedicals = this.searchPage(objReq);
+        List<NoteServices> data = noteMedicals.getContent();
+        String title = "DANH SÁCH PHIẾU DỊCH VỤ";
+        String fileName = "danh-sach-phieu-dich-vu.xlsx";
+        String[] rowsName = new String[]{
+                "STT",
+                "Số phiếu",
+                "Ngày khám",
+                "Tên bệnh nhân",
+                "Tuổi",
+                "Địa chỉ",
+                "Bác sỹ khám",
+        };
+        List<Object[]> dataList = new ArrayList<Object[]>();
+        Object[] objs = null;
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        for (int i = 0; i < data.size(); i++) {
+            NoteServices medicals = data.get(i);
+            objs = new Object[rowsName.length];
+            objs[0] = i + 1;
+            objs[1] = medicals.getNoteNumber();
+            objs[2] = medicals.getNoteDate() != null ? dateFormat.format(medicals.getNoteDate()) : "";
+            objs[3] = medicals.getCustomer() != null ? medicals.getCustomer().getTenKhachHang() : "";
+            objs[4] = medicals.getCustomer() != null ? medicals.getCustomer().getBirthDate() : "";
+            objs[5] = medicals.getCustomer() != null ? medicals.getCustomer().getDiaChi() : "";
+            objs[6] = medicals.getDoctorName();
+            dataList.add(objs);
+        }
+        ExportExcel ex = new ExportExcel(title, fileName, rowsName, dataList, response);
+        ex.export();
     }
 }
