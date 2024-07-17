@@ -14,6 +14,8 @@ import vn.com.gsoft.medical.model.system.BaseResponse;
 import vn.com.gsoft.medical.service.NoteServicesService;
 import vn.com.gsoft.medical.util.system.ResponseUtils;
 
+import java.util.HashMap;
+
 
 @Slf4j
 @RestController
@@ -118,5 +120,11 @@ public class NoteServicesController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<BaseResponse> searchByCustomer(@Valid @RequestBody NoteServicesReq req) throws Exception {
     return ResponseEntity.ok(ResponseUtils.ok(service.searchByCustomer(req)));
+  }
+
+  @PostMapping(value = PathContains.URL_PREVIEW, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> preview(@RequestBody HashMap<String, Object> body) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.preview(body)));
   }
 }

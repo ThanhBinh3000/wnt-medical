@@ -12,19 +12,16 @@ import vn.com.gsoft.medical.constant.RecordStatusContains;
 import vn.com.gsoft.medical.constant.StatusExaminationConstant;
 import vn.com.gsoft.medical.constant.StoreSettingKeys;
 import vn.com.gsoft.medical.entity.*;
-import vn.com.gsoft.medical.model.dto.MedicalFeeReceiptsCustomerDebtRes;
-import vn.com.gsoft.medical.model.dto.MedicalFeeReceiptsReq;
-import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
+import vn.com.gsoft.medical.model.dto.*;
 import vn.com.gsoft.medical.model.system.ApplicationSetting;
 import vn.com.gsoft.medical.model.system.Profile;
 import vn.com.gsoft.medical.repository.*;
 import vn.com.gsoft.medical.service.MedicalFeeReceiptsService;
+import vn.com.gsoft.medical.util.system.FileUtils;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,9 +36,20 @@ public class MedicalFeeReceiptsServiceImpl extends BaseServiceImpl<MedicalFeeRec
     private NoteMedicalsRepository noteMedicalsRepository;
     private NoteServicesRepository noteServicesRepository;
     private ThuocsRepository thuocsRepository;
+    private PhongKhamsRepository phongKhamsRepository;
+    private NoteServiceDetailsRepository noteServiceDetailsRepository;
+    private ConfigTemplateRepository configTemplateRepository;
 
     @Autowired
-    public MedicalFeeReceiptsServiceImpl(MedicalFeeReceiptsRepository hdrRepo, KhachHangsRepository khachHangsRepository, MedicalFeeReceiptDetailsRepository medicalFeeReceiptDetailsRepository, NoteMedicalsRepository noteMedicalsRepository, NoteServicesRepository noteServicesRepository, ThuocsRepository thuocsRepository) {
+    public MedicalFeeReceiptsServiceImpl(MedicalFeeReceiptsRepository hdrRepo,
+                                         KhachHangsRepository khachHangsRepository,
+                                         MedicalFeeReceiptDetailsRepository medicalFeeReceiptDetailsRepository,
+                                         NoteMedicalsRepository noteMedicalsRepository,
+                                         NoteServicesRepository noteServicesRepository,
+                                         ThuocsRepository thuocsRepository,
+                                         PhongKhamsRepository phongKhamsRepository,
+                                         NoteServiceDetailsRepository noteServiceDetailsRepository,
+                                         ConfigTemplateRepository configTemplateRepository) {
         super(hdrRepo);
         this.hdrRepo = hdrRepo;
         this.khachHangsRepository = khachHangsRepository;
@@ -49,6 +57,9 @@ public class MedicalFeeReceiptsServiceImpl extends BaseServiceImpl<MedicalFeeRec
         this.noteMedicalsRepository = noteMedicalsRepository;
         this.noteServicesRepository = noteServicesRepository;
         this.thuocsRepository = thuocsRepository;
+        this.phongKhamsRepository = phongKhamsRepository;
+        this.noteServiceDetailsRepository = noteServiceDetailsRepository;
+        this.configTemplateRepository = configTemplateRepository;
     }
 
     @Override
@@ -168,14 +179,14 @@ public class MedicalFeeReceiptsServiceImpl extends BaseServiceImpl<MedicalFeeRec
                 throw new Exception("Không tìm thấy dữ liệu.");
             }
         }
-
-        MedicalFeeReceipts noteMedicals = optional.get();
-        if (noteMedicals.getIdCus() != null && noteMedicals.getIdCus() > 0) {
-            Optional<KhachHangs> khachHangs = khachHangsRepository.findById(noteMedicals.getIdCus());
-            khachHangs.ifPresent(hangs -> noteMedicals.setCustomerName(hangs.getTenKhachHang()));
+        MedicalFeeReceipts medicalFeeReceipts = optional.get();
+        if (medicalFeeReceipts.getIdCus() != null && medicalFeeReceipts.getIdCus() > 0) {
+            Optional<KhachHangs> khachHangs = khachHangsRepository.findById(medicalFeeReceipts.getIdCus());
+            khachHangs.ifPresent(hangs -> medicalFeeReceipts.setCustomerName(hangs.getTenKhachHang()));
         }
-        noteMedicals.setChiTiets(medicalFeeReceiptDetailsRepository.findByStoreCodeAndIdBill(userInfo.getNhaThuoc().getMaNhaThuoc(), id));
-        return noteMedicals;
+        List<MedicalFeeReceiptDetails> medicalFeeReceiptDetails = medicalFeeReceiptDetailsRepository.findByStoreCodeAndIdBill(userInfo.getNhaThuoc().getMaNhaThuoc(), medicalFeeReceipts.getId());
+        medicalFeeReceipts.setChiTiets(medicalFeeReceiptDetails);
+        return medicalFeeReceipts;
     }
 
     @Override
@@ -272,7 +283,7 @@ public class MedicalFeeReceiptsServiceImpl extends BaseServiceImpl<MedicalFeeRec
             for (Map.Entry<Long, List<MedicalFeeReceiptsCustomerDebtRes>> entry : groupByNoteNumber.entrySet()) {
                 List<MedicalFeeReceiptsCustomerDebtRes> subItems = entry.getValue();
                 BigDecimal thanhTienGroup = subItems.stream().map(MedicalFeeReceiptsCustomerDebtRes::getThanhTien).reduce(BigDecimal.ZERO, BigDecimal::add);
-                for(int i = 0; i < subItems.size(); i++) {
+                for (int i = 0; i < subItems.size(); i++) {
                     MedicalFeeReceiptsCustomerDebtRes item = new MedicalFeeReceiptsCustomerDebtRes();
                     BeanUtils.copyProperties(subItems.get(i), item);
                     // Set thành tiền phiếu và danh sách chi tiết cho item đầu tiên của phiếu
@@ -301,7 +312,7 @@ public class MedicalFeeReceiptsServiceImpl extends BaseServiceImpl<MedicalFeeRec
             for (Map.Entry<Long, List<MedicalFeeReceiptsCustomerDebtRes>> entry : groupByCusId.entrySet()) {
                 List<MedicalFeeReceiptsCustomerDebtRes> subItems = entry.getValue();
                 BigDecimal thanhTienGroup = subItems.stream().map(MedicalFeeReceiptsCustomerDebtRes::getThanhTien).reduce(BigDecimal.ZERO, BigDecimal::add);
-                for(int i = 0; i < subItems.size(); i++) {
+                for (int i = 0; i < subItems.size(); i++) {
                     MedicalFeeReceiptsCustomerDebtRes item = new MedicalFeeReceiptsCustomerDebtRes();
                     BeanUtils.copyProperties(subItems.get(i), item);
                     // Set thành tiền khách hàng và danh sách chi tiết cho item đầu tiên của khách hàng
@@ -320,5 +331,86 @@ public class MedicalFeeReceiptsServiceImpl extends BaseServiceImpl<MedicalFeeRec
             }
         }
         return result;
+    }
+
+    @Override
+    public ReportTemplateResponse preview(HashMap<String, Object> hashMap) throws Exception {
+        Profile userInfo = this.getLoggedUser();
+        if (userInfo == null)
+            throw new Exception("Bad request.");
+        try {
+            String loai = FileUtils.safeToString(hashMap.get("loai"));
+            MedicalFeeReceipts medicalFeeReceipts = this.detail(FileUtils.safeToLong(hashMap.get("id")));
+            String templatePath = "/tienKham/";
+            Integer checkType = 0;
+            Optional<ConfigTemplate> configTemplates = null;
+            configTemplates = configTemplateRepository.findByMaNhaThuocAndPrintTypeAndMaLoaiAndType(medicalFeeReceipts.getStoreCode(), loai, Long.valueOf(ENoteType.ReceiptMedicalFee), checkType);
+            if (!configTemplates.isPresent()) {
+                configTemplates = configTemplateRepository.findByPrintTypeAndMaLoaiAndType(loai, Long.valueOf(ENoteType.ReceiptMedicalFee), checkType);
+            }
+            if (configTemplates.isPresent()) {
+                templatePath += configTemplates.get().getTemplateFileName();
+            }
+
+            ExampleClass(userInfo, medicalFeeReceipts);
+            List<ReportImage> reportImage = new ArrayList<>();
+//            reportImage.add(new ReportImage("imageLogoPK", "src/main/resources/template/imageLogoPK.png"));
+            if ("10324".equals(medicalFeeReceipts.getStoreCode())) {
+                reportImage.add(new ReportImage("imageLogo_10324", "src/main/resources/template/imageLogo_10324.png"));
+            }
+            InputStream templateInputStream = FileUtils.getInputStreamByFileName(templatePath);
+            return FileUtils.convertDocxToPdf(templateInputStream, medicalFeeReceipts, reportImage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void ExampleClass(Profile userInfo, MedicalFeeReceipts medicalFeeReceipts) {
+        List<MedicalFeeReceiptDetails> medicalFeeReceiptDetails = medicalFeeReceiptDetailsRepository.findByStoreCodeAndIdBill(userInfo.getNhaThuoc().getMaNhaThuoc(), medicalFeeReceipts.getId());
+        for (MedicalFeeReceiptDetails detail : medicalFeeReceiptDetails) {
+            if (Objects.equals(detail.getTypeNote(), ENoteType.ExaminationCard)) {
+                Optional<NoteMedicals> noteMedicals = noteMedicalsRepository.findById(detail.getNoteId());
+                if (noteMedicals.isPresent()) {
+                    if (noteMedicals.get().getIdServiceExam() != null) {
+                        Optional<Thuocs> thuoc = thuocsRepository.findById(noteMedicals.get().getIdServiceExam()).filter(item -> item.getRecordStatusId() == RecordStatusContains.ACTIVE);
+                        detail.setExaminationContent(thuoc.map(Thuocs::getTenThuoc).orElse("Khám và tưu vấn"));
+                        detail.setExtraInfo("Khám bệnh");
+                        detail.setUnit("Lần");
+                        detail.setAmount(BigDecimal.ONE);
+                        detail.setPrice(noteMedicals.get().getTotalMoney());
+                        detail.setTotalMoney(noteMedicals.get().getTotalMoney());
+                    }
+                }
+            }
+            if (Objects.equals(detail.getTypeNote(), ENoteType.NoteService)) {
+                Optional<NoteServices> noteServices = noteServicesRepository.findById(detail.getNoteId());
+                System.out.println(noteServices + "Trần Thanh Bình");
+                if (noteServices.isPresent()) {
+                    List<NoteServiceDetails> noteServiceDetails = noteServiceDetailsRepository.findByIdNoteService(noteServices.get().getId())
+                            .stream().filter(item -> item.getRecordStatusId() == RecordStatusContains.ACTIVE).collect(Collectors.toList());
+                    for (NoteServiceDetails noteServiceDetai : noteServiceDetails) {
+                        thuocsRepository.findById(noteServiceDetai.getDrugId()).ifPresent(item -> detail.setExaminationContent(item.getTenThuoc()));
+                        detail.setExtraInfo("Dịch vụ");
+                        detail.setUnit("Lần");
+                        detail.setAmount(noteServiceDetai.getAmount());
+                        detail.setPrice(noteServiceDetai.getRetailOutPrice());
+                        detail.setTotalMoney(noteServices.get().getTotalMoney());
+                    }
+                }
+            }
+        }
+        khachHangsRepository.findById(medicalFeeReceipts.getIdCus()).ifPresent(item -> {
+            medicalFeeReceipts.setCustomerAddress(item.getDiaChi());
+            medicalFeeReceipts.setCustomerPhoneNumber(item.getSoDienThoai());
+            medicalFeeReceipts.setCustomerAge(Period.between(item.getBirthDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), LocalDate.now()).getYears());
+            medicalFeeReceipts.setCustomerGender(item.getSexId() == 1 ? "Nữ" : "Nam");
+            medicalFeeReceipts.setCustomerEmail(item.getEmail());
+        });
+        medicalFeeReceipts.setPaymentMethods(medicalFeeReceipts.getTypePayment() == 1 ? "Chuyển khoản" : "Tiền mặt");
+        medicalFeeReceipts.setText(FileUtils.convertToWords(medicalFeeReceipts.getTotalMoney()));
+        medicalFeeReceipts.setPharmacyName(userInfo.getNhaThuoc().getTenNhaThuoc());
+        medicalFeeReceipts.setPharmacyAddress(userInfo.getNhaThuoc().getDiaChi());
+        medicalFeeReceipts.setPharmacyPhoneNumber(userInfo.getNhaThuoc().getDienThoai());
     }
 }

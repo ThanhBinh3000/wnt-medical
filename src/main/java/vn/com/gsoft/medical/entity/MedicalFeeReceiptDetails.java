@@ -30,5 +30,19 @@ public class MedicalFeeReceiptDetails extends BaseEntity{
     private Long typeNote;
     @Column(name = "NoteNumber")
     private Long noteNumber;
+    @Transient
+    private String examinationContent;
+    @Transient
+    private String extraInfo;
+    @Transient
+    private String clinicName;
+    @Transient
+    private String unit;
+    @Transient
+    private BigDecimal amount;
+    @Transient
+    private BigDecimal price;
+    @Transient
+    private BigDecimal totalMoney;
 }
 

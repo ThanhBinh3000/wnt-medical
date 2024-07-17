@@ -3,9 +3,11 @@ package vn.com.gsoft.medical.service;
 
 import org.springframework.transaction.annotation.Transactional;
 import vn.com.gsoft.medical.entity.NoteMedicals;
+import vn.com.gsoft.medical.entity.ReportTemplateResponse;
 import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
 
 import java.util.Date;
+import java.util.HashMap;
 
 public interface NoteMedicalsService extends BaseService<NoteMedicals, NoteMedicalsReq, Long> {
 
@@ -26,4 +28,6 @@ public interface NoteMedicalsService extends BaseService<NoteMedicals, NoteMedic
 
     @Transactional(rollbackFor = {Exception.class, Throwable.class})
     NoteMedicals updateNoteWait(NoteMedicalsReq req) throws Exception;
+
+    ReportTemplateResponse preview(HashMap<String, Object> hashMap) throws Exception;
 }

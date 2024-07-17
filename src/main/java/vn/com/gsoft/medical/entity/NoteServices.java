@@ -71,9 +71,23 @@ public class NoteServices extends BaseEntity {
     @Transient
     private String customerName;
     @Transient
+    private String customerAddress;
+    @Transient
+    private String customerPhoneNumber;
+    @Transient
+    private Integer customerAge;
+    @Transient
+    private String customerGender;
+    @Transient
+    private String customerEmail;
+    @Transient
+    private Date customeBirthDate;
+    @Transient
     private KhachHangs customer;
     @Transient
     private String doctorName;
+    @Transient
+    private String doctorPhoneNumber;
     @Transient
     private List<NoteServiceDetails> chiTiets;
     @Transient
@@ -92,5 +106,11 @@ public class NoteServices extends BaseEntity {
     private Boolean idStatus;
     @Transient
     private String tenThuoc;
+    @Transient
+    private String pharmacyName;
+    @Transient
+    private String pharmacyAddress;
+    @Transient
+    private String pharmacyPhoneNumber;
 }
 

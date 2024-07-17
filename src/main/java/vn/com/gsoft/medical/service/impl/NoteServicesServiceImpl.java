@@ -8,23 +8,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import vn.com.gsoft.medical.constant.ENoteType;
 import vn.com.gsoft.medical.constant.ETypeService;
 import vn.com.gsoft.medical.constant.RecordStatusContains;
 import vn.com.gsoft.medical.entity.*;
-import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
-import vn.com.gsoft.medical.model.dto.NoteServicesChoThucHienRes;
-import vn.com.gsoft.medical.model.dto.NoteServicesLieuTrinhRes;
-import vn.com.gsoft.medical.model.dto.NoteServicesReq;
+import vn.com.gsoft.medical.model.dto.*;
 import vn.com.gsoft.medical.model.system.Profile;
 import vn.com.gsoft.medical.repository.*;
 import vn.com.gsoft.medical.service.NoteServicesService;
 import vn.com.gsoft.medical.util.system.DataUtils;
+import vn.com.gsoft.medical.util.system.FileUtils;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
+import java.util.*;
 
 
 @Service
@@ -35,30 +35,37 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
     private NoteServiceDetailsRepository noteServiceDetailsRepository;
     private UserProfileRepository userProfileRepository;
     private KhachHangsRepository khachHangsRepository;
-	private BacSiesRepository bacSiesRepository;
+    private BacSiesRepository bacSiesRepository;
     private ThuocsRepository thuocsRepository;
     private NhomThuocsRepository nhomThuocsRepository;
+    private PhongKhamsRepository phongKhamsRepository;
+    private ConfigTemplateRepository configTemplateRepository;
+
     @Autowired
     public NoteServicesServiceImpl(NoteServicesRepository hdrRepo, UserProfileRepository userProfileRepository,
                                    KhachHangsRepository khachHangsRepository,
                                    BacSiesRepository bacSiesRepository,
                                    NoteServiceDetailsRepository noteServiceDetailsRepository,
                                    ThuocsRepository thuocsRepository,
-                                   NhomThuocsRepository nhomThuocsRepository) {
+                                   NhomThuocsRepository nhomThuocsRepository,
+                                   PhongKhamsRepository phongKhamsRepository,
+                                   ConfigTemplateRepository configTemplateRepository) {
         super(hdrRepo);
         this.hdrRepo = hdrRepo;
         this.userProfileRepository = userProfileRepository;
         this.khachHangsRepository = khachHangsRepository;
-        this.bacSiesRepository =bacSiesRepository;
+        this.bacSiesRepository = bacSiesRepository;
         this.noteServiceDetailsRepository = noteServiceDetailsRepository;
         this.thuocsRepository = thuocsRepository;
         this.nhomThuocsRepository = nhomThuocsRepository;
+        this.phongKhamsRepository = phongKhamsRepository;
+        this.configTemplateRepository = configTemplateRepository;
     }
 
     @Override
     public Page<NoteServices> searchPage(NoteServicesReq req) throws Exception {
         Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
-        if(req.getRecordStatusId() == null){
+        if (req.getRecordStatusId() == null) {
             req.setRecordStatusId(RecordStatusContains.ACTIVE);
         }
         Page<NoteServices> noteServices = hdrRepo.searchPage(req, pageable);
@@ -81,13 +88,13 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
     }
 
     @Override
-    public NoteServices create (NoteServicesReq req) throws Exception {
+    public NoteServices create(NoteServicesReq req) throws Exception {
         Profile userInfo = this.getLoggedUser();
         if (userInfo == null)
             throw new Exception("Bad request.");
         NoteServices hdr = new NoteServices();
         BeanUtils.copyProperties(req, hdr, "id");
-        if(req.getRecordStatusId() == null){
+        if (req.getRecordStatusId() == null) {
             hdr.setRecordStatusId(RecordStatusContains.ACTIVE);
         }
         hdr.setCreatedByUserId(userInfo.getId());
@@ -105,7 +112,7 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
         return save;
     }
 
-    private List<NoteServiceDetails> saveDetail(NoteServicesReq req, Long idHdr){
+    private List<NoteServiceDetails> saveDetail(NoteServicesReq req, Long idHdr) {
         noteServiceDetailsRepository.deleteAllByIdNoteService(idHdr);
         List<NoteServiceDetails> list = req.getChiTiets();
         list.forEach(item -> {
@@ -121,10 +128,10 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
     @Override
     public Object searchPageLieuTrinh(NoteServicesReq req) {
         Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
-        if(req.getRecordStatusId() == null){
+        if (req.getRecordStatusId() == null) {
             req.setRecordStatusId(RecordStatusContains.ACTIVE);
         }
-        Page<NoteServicesLieuTrinhRes> results =   DataUtils.convertPage(hdrRepo.searchPageLieuTrinh(req, pageable), NoteServicesLieuTrinhRes.class);
+        Page<NoteServicesLieuTrinhRes> results = DataUtils.convertPage(hdrRepo.searchPageLieuTrinh(req, pageable), NoteServicesLieuTrinhRes.class);
         return results.map(result -> {
             final NoteServices res = new NoteServices();
             BeanUtils.copyProperties(result, res);
@@ -133,7 +140,7 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
                 khachHangs.ifPresent(khachHang -> res.setCustomerName(khachHang.getTenKhachHang()));
                 khachHangs.ifPresent(res::setCustomer);
             }
-            if(res.getDrugId() != null && res.getDrugId() > 0){
+            if (res.getDrugId() != null && res.getDrugId() > 0) {
                 Optional<Thuocs> dichVus = thuocsRepository.findById(res.getDrugId());
                 dichVus.ifPresent(res::setDichVu);
             }
@@ -144,10 +151,10 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
     @Override
     public Object searchPageChoThucHien(NoteServicesReq req) {
         Pageable pageable = PageRequest.of(req.getPaggingReq().getPage(), req.getPaggingReq().getLimit());
-        if(req.getRecordStatusId() == null){
+        if (req.getRecordStatusId() == null) {
             req.setRecordStatusId(RecordStatusContains.ACTIVE);
         }
-        Page<NoteServicesChoThucHienRes> results =   DataUtils.convertPage(hdrRepo.searchPageChoThucHien(req, pageable), NoteServicesChoThucHienRes.class);
+        Page<NoteServicesChoThucHienRes> results = DataUtils.convertPage(hdrRepo.searchPageChoThucHien(req, pageable), NoteServicesChoThucHienRes.class);
         return results.map(result -> {
             final NoteServices res = new NoteServices();
             BeanUtils.copyProperties(result, res);
@@ -164,10 +171,10 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
                 Optional<BacSies> bacSies = bacSiesRepository.findById(res.getIdDoctor());
                 bacSies.ifPresent(sies -> res.setDoctorName(sies.getTenBacSy()));
             }
-            if(res.getDrugId() != null && res.getDrugId() > 0){
+            if (res.getDrugId() != null && res.getDrugId() > 0) {
                 Optional<Thuocs> dichVus = thuocsRepository.findById(res.getDrugId());
                 dichVus.ifPresent(res::setDichVu);
-                if(res.getDichVu() != null){
+                if (res.getDichVu() != null) {
                     Optional<NhomThuocs> nhomThuocs = nhomThuocsRepository.findById(res.getDichVu().getNhomThuocMaNhomThuoc());
                     nhomThuocs.ifPresent(nhomThuoc -> res.getDichVu().setTenNhomThuoc(nhomThuoc.getTenNhomThuoc()));
                 }
@@ -291,19 +298,68 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
         if (noteServices.getIdCus() != null && noteServices.getIdCus() > 0) {
             Optional<KhachHangs> khachHangs = khachHangsRepository.findById(noteServices.getIdCus());
             khachHangs.ifPresent(khachHang -> noteServices.setCustomerName(khachHang.getTenKhachHang()));
+            khachHangs.ifPresent(khachHang -> noteServices.setCustomerAddress(khachHang.getDiaChi()));
+            khachHangs.ifPresent(khachHang -> noteServices.setCustomerPhoneNumber(khachHang.getSoDienThoai()));
+            khachHangs.ifPresent(khachHang -> noteServices.setCustomerGender(khachHang.getSexId() == 1 ? "Nữ" : "Nam"));
+            khachHangs.ifPresent(khachHang -> noteServices.setCustomerEmail(khachHang.getEmail()));
+            khachHangs.ifPresent(khachHang -> noteServices.setCustomeBirthDate(khachHang.getBirthDate()));
+            khachHangs.ifPresent(khachHang -> noteServices.setCustomerAge(Period.between(khachHang.getBirthDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), LocalDate.now()).getYears()));
             khachHangs.ifPresent(noteServices::setCustomer);
         }
         if (noteServices.getIdDoctor() != null && noteServices.getIdDoctor() > 0) {
             Optional<BacSies> bacSies = bacSiesRepository.findById(noteServices.getIdDoctor());
             bacSies.ifPresent(sies -> noteServices.setDoctorName(sies.getTenBacSy()));
+            bacSies.ifPresent(sies -> noteServices.setDoctorPhoneNumber(sies.getDienThoai()));
         }
         noteServices.setChiTiets(noteServiceDetailsRepository.findByIdNoteService(noteServices.getId()));
         for (NoteServiceDetails kk : noteServices.getChiTiets()) {
             if (kk.getDrugId() != null && kk.getDrugId() > 0) {
                 Optional<Thuocs> thuocs = thuocsRepository.findById(kk.getDrugId());
                 thuocs.ifPresent(profile -> kk.setTenThuoc(thuocs.get().getTenThuoc()));
+                thuocs.ifPresent(profile -> kk.setTenNhomThuoc(thuocs.get().getTenNhomThuoc()));
+            }
+            if (kk.getImplementationRoomCode() != null && kk.getImplementationRoomCode() > 0) {
+                Optional<PhongKhams> phongKhams = phongKhamsRepository.findById(Long.valueOf(kk.getImplementationRoomCode()));
+                phongKhams.ifPresent(phongKhams1 -> kk.setNameClinic(phongKhams.get().getTenPhongKham()));
             }
         }
         return noteServices;
+    }
+
+    @Override
+    public ReportTemplateResponse preview(HashMap<String, Object> hashMap) throws Exception {
+        Profile userInfo = this.getLoggedUser();
+        if (userInfo == null)
+            throw new Exception("Bad request.");
+        try {
+            String loai = FileUtils.safeToString(hashMap.get("loai"));
+            NoteServices noteServices = this.detail(FileUtils.safeToLong(hashMap.get("id")));
+            Object value = hashMap.get("amountPrint");
+            String templatePath = "/dichVu/";
+            Integer checkType = 0;
+            if (value != null) {
+                checkType = 1;
+            }
+            Optional<ConfigTemplate> configTemplates = null;
+            configTemplates = configTemplateRepository.findByMaNhaThuocAndPrintTypeAndMaLoaiAndType(userInfo.getNhaThuoc().getMaNhaThuoc(), loai, Long.valueOf(ENoteType.NoteService), checkType);
+            if (!configTemplates.isPresent()) {
+                configTemplates = configTemplateRepository.findByPrintTypeAndMaLoaiAndType(loai, Long.valueOf(ENoteType.NoteService), checkType);
+            }
+            if (configTemplates.isPresent()) {
+                templatePath += configTemplates.get().getTemplateFileName();
+            }
+            List<ReportImage> reportImage = new ArrayList<>();
+            if ("11440".equals(userInfo.getNhaThuoc().getMaNhaThuoc())) {
+                reportImage.add(new ReportImage("imageLogo_11440", "src/main/resources/template/imageLogo_11440.png"));
+            }
+            noteServices.setPharmacyName(userInfo.getNhaThuoc().getTenNhaThuoc());
+            noteServices.setPharmacyAddress(userInfo.getNhaThuoc().getDiaChi());
+            noteServices.setPharmacyPhoneNumber(userInfo.getNhaThuoc().getDienThoai());
+            InputStream templateInputStream = FileUtils.getInputStreamByFileName(templatePath);
+            return FileUtils.convertDocxToPdf(templateInputStream, noteServices, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
