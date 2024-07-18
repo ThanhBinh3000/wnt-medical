@@ -23,4 +23,6 @@ public class MedicalFeeReceiptsReq extends BaseRequest {
     private Integer typePayment;
     private List<MedicalFeeReceiptDetails> chiTiets = new ArrayList<>();
     private Boolean isDisplayByNote;
+
+    private Long idMedical;
 }

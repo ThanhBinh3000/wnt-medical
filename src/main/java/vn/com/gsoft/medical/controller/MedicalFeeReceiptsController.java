@@ -20,7 +20,7 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/medical-fee-receipts")
 public class MedicalFeeReceiptsController {
-	
+
   @Autowired
   MedicalFeeReceiptsService service;
 
@@ -100,5 +100,11 @@ public class MedicalFeeReceiptsController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<BaseResponse> preview(@RequestBody HashMap<String, Object> body) throws Exception {
     return ResponseEntity.ok(ResponseUtils.ok(service.preview(body)));
+  }
+
+  @PostMapping(value = "payment-medical-note", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> paymentMedicalNote(@Valid @RequestBody MedicalFeeReceiptsReq objReq) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.paymentMedicalNote(objReq)));
   }
 }

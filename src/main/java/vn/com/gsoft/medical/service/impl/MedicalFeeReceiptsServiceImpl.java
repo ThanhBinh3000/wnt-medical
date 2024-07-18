@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
+import java.time.LocalDateTime;
 
 @Service
 @Log4j2
@@ -412,5 +412,52 @@ public class MedicalFeeReceiptsServiceImpl extends BaseServiceImpl<MedicalFeeRec
         medicalFeeReceipts.setPharmacyName(userInfo.getNhaThuoc().getTenNhaThuoc());
         medicalFeeReceipts.setPharmacyAddress(userInfo.getNhaThuoc().getDiaChi());
         medicalFeeReceipts.setPharmacyPhoneNumber(userInfo.getNhaThuoc().getDienThoai());
+    }
+
+    @Override
+    public Long paymentMedicalNote(MedicalFeeReceiptsReq req) throws Exception {
+        Long result = 0L;
+        Profile userInfo = this.getLoggedUser();
+        if (userInfo == null)
+            throw new Exception("Bad request.");
+
+        Optional<NoteMedicals> optional = noteMedicalsRepository.findById(req.getIdMedical());
+        if (optional.isEmpty()) {
+            throw new Exception("Không tìm thấy dữ liệu.");
+        } else {
+            if (optional.get().getRecordStatusId() != RecordStatusContains.ACTIVE) {
+                throw new Exception("Không tìm thấy dữ liệu.");
+            }
+        }
+        var medicalFeeReceipts = new MedicalFeeReceipts();
+        medicalFeeReceipts.setNoteNumber(getNewNoteNumber());
+        medicalFeeReceipts.setTotalMoney(req.getTotalMoney());
+        medicalFeeReceipts.setDiscount(req.getDiscount());
+        medicalFeeReceipts.setTotalMoney(req.getTotalMoney());
+        medicalFeeReceipts.setCreated(new Date());
+        medicalFeeReceipts.setNoteDate(new Date());
+        medicalFeeReceipts.setCreatedByUserId(userInfo.getId());
+        medicalFeeReceipts.setStoreCode(userInfo.getNhaThuoc().getMaNhaThuoc());
+        medicalFeeReceipts.setDescriptNotePay("Đã thanh toán cho phiếu khám số: " + req.getNoteNumber());
+        medicalFeeReceipts.setRecordStatusId(RecordStatusContains.ACTIVE);
+        medicalFeeReceipts.setIdCus(req.getIdCus());
+        medicalFeeReceipts = hdrRepo.save(medicalFeeReceipts);
+
+        var itemDetail = new MedicalFeeReceiptDetails();
+        itemDetail.setIdBill(medicalFeeReceipts.getId());
+        itemDetail.setNoteId(req.getIdMedical());
+        itemDetail.setNoteNumber(req.getNoteNumber().longValue());
+        itemDetail.setTypeNote(ENoteType.ExaminationCard);
+        itemDetail.setStoreCode(userInfo.getNhaThuoc().getMaNhaThuoc());
+        itemDetail.setCreated(new Date());
+        itemDetail.setCreatedByUserId(userInfo.getId());
+        itemDetail.setRecordStatusId(RecordStatusContains.ACTIVE);
+        medicalFeeReceiptDetailsRepository.save(itemDetail);
+
+        var medicalNote = optional.get();
+        medicalNote.setIsDeb(false);
+        noteMedicalsRepository.save(medicalNote);
+        result = medicalFeeReceipts.getId();
+        return result;
     }
 }
