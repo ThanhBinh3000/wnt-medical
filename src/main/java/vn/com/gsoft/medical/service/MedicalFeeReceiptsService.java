@@ -16,4 +16,6 @@ public interface MedicalFeeReceiptsService extends BaseService<MedicalFeeReceipt
     List<MedicalFeeReceiptsCustomerDebtRes> getListCustomerDebt(Long customerId, Boolean isDisplayByNote) throws Exception;
 
     ReportTemplateResponse preview(HashMap<String, Object> hashMap) throws Exception;
+    //Thanh toán cho một phiếu
+    Long paymentMedicalNote(MedicalFeeReceiptsReq req) throws Exception;
 }
