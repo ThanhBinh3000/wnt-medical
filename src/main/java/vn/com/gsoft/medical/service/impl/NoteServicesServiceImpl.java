@@ -99,6 +99,7 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
         hdr.setPreScore(BigDecimal.ZERO);
         hdr.setScore(BigDecimal.ZERO);
         hdr.setTotalMoney(BigDecimal.ZERO);
+        hdr.setStoreCode(userInfo.getNhaThuoc().getMaNhaThuoc());
         NoteServices save = hdrRepo.save(hdr);
         List<NoteServiceDetails> noteServiceDetails = saveDetail(req, hdr.getId());
         save.setChiTiets(noteServiceDetails);
@@ -240,7 +241,7 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
                 // Replace the beginning of the barcode with storeCode + sequence number
                 barcode = storeCodeWithOrder + barcode;
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {1
             // storeCode contains non-numeric characters, ignore the numeric check
         }
 
