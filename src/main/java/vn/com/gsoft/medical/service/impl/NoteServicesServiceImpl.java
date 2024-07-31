@@ -259,7 +259,7 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
                 // Replace the beginning of the barcode with storeCode + sequence number
                 barcode = storeCodeWithOrder + barcode;
             }
-        } catch (NumberFormatException e) {1
+        } catch (NumberFormatException e) {
             // storeCode contains non-numeric characters, ignore the numeric check
         }
 
