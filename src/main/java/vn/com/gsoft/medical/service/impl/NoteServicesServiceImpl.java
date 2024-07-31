@@ -18,9 +18,11 @@ import vn.com.gsoft.medical.model.dto.NoteMedicalsReq;
 import vn.com.gsoft.medical.model.dto.NoteServicesChoThucHienRes;
 import vn.com.gsoft.medical.model.dto.NoteServicesLieuTrinhRes;
 import vn.com.gsoft.medical.model.dto.NoteServicesReq;
+import vn.com.gsoft.medical.model.system.ApplicationSetting;
 import vn.com.gsoft.medical.model.system.PaggingReq;
 import vn.com.gsoft.medical.model.dto.*;
 import vn.com.gsoft.medical.model.system.Profile;
+import vn.com.gsoft.medical.model.system.Settings;
 import vn.com.gsoft.medical.repository.*;
 import vn.com.gsoft.medical.service.NoteServicesService;
 import vn.com.gsoft.medical.util.system.DataUtils;
@@ -29,6 +31,7 @@ import vn.com.gsoft.medical.util.system.FileUtils;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -36,6 +39,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Stream;
 
 
 @Service
@@ -117,10 +121,58 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
         hdr.setPreScore(BigDecimal.ZERO);
         hdr.setScore(BigDecimal.ZERO);
         hdr.setStoreCode(userInfo.getNhaThuoc().getMaNhaThuoc());
+        this.updateScores(hdr,userInfo);
         NoteServices save = hdrRepo.save(hdr);
         List<NoteServiceDetails> noteServiceDetails = saveDetail(req, hdr.getId());
         save.setChiTiets(noteServiceDetails);
-        return save;
+        return hdr;
+    }
+
+    private void updateScores(NoteServices noteModel, Profile userInfo)
+    {
+        List<ApplicationSetting> settings = userInfo.getApplicationSettings();
+
+        Optional<ApplicationSetting> scoreRate = settings.stream().filter(item -> item.getSettingKey().equals("SCORE_RATE")).findFirst();
+
+        if(scoreRate.isPresent()){
+            Boolean active = scoreRate.get().getActivated();
+            BigDecimal settingScore = BigDecimal.valueOf(Double.valueOf(scoreRate.get().getSettingValue()));
+            if( active && settingScore.compareTo(AppConstants.EspAmount) > 0){
+                BigDecimal newScore = BigDecimal.ZERO;
+                for (NoteServiceDetails dtl : noteModel.getChiTiets()) {
+                    if(dtl.getDrugId() != null && dtl.getDrugId() > 0L){
+                        Optional<Thuocs> thuocOpt = thuocsRepository.findById(dtl.getDrugId());
+
+                        var scopreRate = (thuocOpt.get().getMoneyToOneScoreRate() != null && thuocOpt.get().getMoneyToOneScoreRate().compareTo(AppConstants.EspAmount) > 0) ? thuocOpt.get().getMoneyToOneScoreRate() : settingScore;
+                        if (scopreRate.compareTo(AppConstants.EspAmount) > 0)
+                        {
+                            BigDecimal score = dtl.getAmount().multiply(dtl.getRetailOutPrice()).divide(scopreRate,2, RoundingMode.DOWN);
+                            newScore = newScore.add(score);
+                        }
+                    }
+                }
+                noteModel.setPreScore(noteModel.getScore());
+                noteModel.setScore(newScore);
+            }
+        }
+
+//        var hasScoreConfig = setting.ScoreRate_Activated && setting.ScoreRate > (decimal)AppConstants.Esp;
+//        if (!hasScoreConfig) return;
+//        var noteItems = noteModel.ListDetailNote;
+//        noteItems.ForEach(i =>
+//                {
+//        if (i.DrugId > 0)
+//        {
+//            var scoreRate = i.MoneyToOneScoreRate > (decimal)AppConstants.EspAmount ? i.MoneyToOneScoreRate : setting.ScoreRate;
+//            if (scoreRate > (decimal)AppConstants.EspAmount)
+//            {
+//                var score = (decimal)(i.Amount * i.RetailOutPrice) / scoreRate;
+//                i.Score = score;
+//            }
+//        }
+//            });
+//        noteModel.PreScore = noteModel.Score;
+//        noteModel.Score = noteItems.Where(i => i.Scorable).Sum(i => i.Score);
     }
 
     private List<NoteServiceDetails> saveDetail(NoteServicesReq req, Long idHdr) {
