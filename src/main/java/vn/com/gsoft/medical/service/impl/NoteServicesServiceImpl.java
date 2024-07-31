@@ -328,6 +328,7 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
             if (kk.getDrugId() != null && kk.getDrugId() > 0) {
                 Optional<Thuocs> thuocs = thuocsRepository.findById(kk.getDrugId());
                 thuocs.ifPresent(profile -> kk.setTenThuoc(thuocs.get().getTenThuoc()));
+                thuocs.ifPresent(profile -> kk.setMaThuoc(thuocs.get().getMaThuoc()));
                 thuocs.ifPresent(profile -> kk.setTenNhomThuoc(thuocs.get().getTenNhomThuoc()));
             }
             if (kk.getImplementationRoomCode() != null && kk.getImplementationRoomCode() > 0) {

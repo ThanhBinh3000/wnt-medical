@@ -69,6 +69,8 @@ public class NoteServiceDetails {
     @Transient
     private String tenNhomThuoc;
     @Transient
+    private String maThuoc;
+    @Transient
     private BacSies bacSies;
     @Transient
     private String nameClinic;
