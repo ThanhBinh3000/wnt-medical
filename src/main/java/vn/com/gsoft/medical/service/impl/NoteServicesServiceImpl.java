@@ -116,7 +116,6 @@ public class NoteServicesServiceImpl extends BaseServiceImpl<NoteServices, NoteS
         hdr.setPerformerId(0L);
         hdr.setPreScore(BigDecimal.ZERO);
         hdr.setScore(BigDecimal.ZERO);
-        hdr.setTotalMoney(BigDecimal.ZERO);
         hdr.setStoreCode(userInfo.getNhaThuoc().getMaNhaThuoc());
         NoteServices save = hdrRepo.save(hdr);
         List<NoteServiceDetails> noteServiceDetails = saveDetail(req, hdr.getId());
