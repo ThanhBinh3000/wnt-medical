@@ -13,12 +13,14 @@ import vn.com.gsoft.medical.model.system.BaseResponse;
 import vn.com.gsoft.medical.service.MedicalFeeReceiptsService;
 import vn.com.gsoft.medical.util.system.ResponseUtils;
 
+import java.util.HashMap;
+
 
 @Slf4j
 @RestController
 @RequestMapping("/medical-fee-receipts")
 public class MedicalFeeReceiptsController {
-	
+
   @Autowired
   MedicalFeeReceiptsService service;
 
@@ -80,5 +82,29 @@ public class MedicalFeeReceiptsController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<BaseResponse> restore(@Valid @RequestBody MedicalFeeReceiptsReq idSearchReq) throws Exception {
     return ResponseEntity.ok(ResponseUtils.ok(service.restore(idSearchReq.getId())));
+  }
+
+  @GetMapping(value = "get-new-note-number", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> getNewNoteNumber() throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.getNewNoteNumber()));
+  }
+
+  @PostMapping(value = "get-list-customer-debt", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> getListCustomerDebt(@Valid @RequestBody MedicalFeeReceiptsReq objReq) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.getListCustomerDebt(objReq.getIdCus(), objReq.getIsDisplayByNote())));
+  }
+
+  @PostMapping(value = PathContains.URL_PREVIEW, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> preview(@RequestBody HashMap<String, Object> body) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.preview(body)));
+  }
+
+  @PostMapping(value = "payment-medical-note", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<BaseResponse> paymentMedicalNote(@Valid @RequestBody MedicalFeeReceiptsReq objReq) throws Exception {
+    return ResponseEntity.ok(ResponseUtils.ok(service.paymentMedicalNote(objReq)));
   }
 }

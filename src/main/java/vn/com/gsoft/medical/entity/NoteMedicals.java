@@ -70,7 +70,7 @@ public class NoteMedicals extends BaseEntity {
     @Column(name = "ReasonExamination")
     private String reasonExamination;
     @Column(name = "IdServiceExam")
-    private Integer idServiceExam;
+    private Long idServiceExam;
     @Column(name = "IdDiagnostic")
     private Integer idDiagnostic;
     @Column(name = "TestResults")
@@ -86,10 +86,32 @@ public class NoteMedicals extends BaseEntity {
     @Transient
     private String patientName;
     @Transient
+    private String customerAddress;
+    @Transient
+    private String customerPhoneNumber;
+    @Transient
+    private String customerEmail;
+    @Transient
+    private String customerGender;
+    @Transient
+    private Integer customerAge;
+    @Transient
     private KhachHangs customer;
     @Transient
     private String doctorName;
     @Transient
+    private String TitleLamSang;
+    @Transient
+    private String nameCilinic;
+    @Transient
+    private String pharmacyName;
+    @Transient
+    private String pharmacyAddress;
+    @Transient
+    private String pharmacyPhoneNumber;
+    @Transient
     private List<BenhBoYTe> diagnostics;
+    @Transient
+    private List<SampleNoteDetail> lichSuKeDons;
 }
 

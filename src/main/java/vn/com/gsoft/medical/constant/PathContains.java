@@ -11,6 +11,7 @@ public class PathContains {
     public static final String URL_CANCEL = "/cancel";
     public static final String URL_DELETE = "/delete";
     public static final String URL_LOCK = "/lock";
+    public static final String URL_IMPORT = "/import";
     public static final String URL_BAR_CODE = "/bar-code";
     public static final String URL_DELETE_DATABASE = "/delete-database";
     public static final String URL_RESTORE = "/restore";
@@ -21,6 +22,8 @@ public class PathContains {
     public static final String URL_PHIEU_DICH_VU = "/phieu-dich-vu";
     public static final String URL_PHIEU_DICH_VU_CT = "/phieu-dich-vu-ct";
     public static final String URL_BENH_BO_Y_TE = "/benh-bo-y-te";
-
+    public static final String URL_CHANGESTATUS = "/change-status";
+    public static final String URL_EXPORT = "/export";
+    public static final String URL_PREVIEW = "/preview";
 
 }
